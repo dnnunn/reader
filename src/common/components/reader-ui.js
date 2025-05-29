@@ -134,6 +134,16 @@ View.propTypes = {
 
 const ReaderUI = React.forwardRef((props, ref) => {
 	let [state, setState] = useState(props.state);
+	let [authorName, setAuthorName] = useState(() => {
+		let name = window.localStorage.getItem('annotationAuthorName');
+		if (!name) {
+			name = window.prompt('Enter your name for annotations:', '');
+			if (name) {
+				window.localStorage.setItem('annotationAuthorName', name);
+			}
+		}
+		return name || '';
+	});
 	let annotationsViewRef = useRef();
 
 	useImperativeHandle(ref, () => ({
@@ -147,6 +157,15 @@ const ReaderUI = React.forwardRef((props, ref) => {
 
 	let stackedView = state.bottomPlaceholderHeight !== null;
 	let showContextPaneToggle = state.showContextPaneToggle && (stackedView || !state.contextPaneOpen);
+
+	function handleChangeAuthorName() {
+		const newName = window.prompt('Enter your name for annotations:', authorName);
+		if (newName !== null) {
+			setAuthorName(newName);
+			window.localStorage.setItem('annotationAuthorName', newName);
+			props.onChangeAuthorName && props.onChangeAuthorName(newName);
+		}
+	}
 
 	return (
 		<Fragment>
@@ -186,7 +205,11 @@ const ReaderUI = React.forwardRef((props, ref) => {
 					onToggleAppearancePopup={props.onToggleAppearancePopup}
 					onToggleFind={props.onToggleFind}
 					onToggleContextPane={props.onToggleContextPane}
-				/>
+				>
+					<button onClick={handleChangeAuthorName} title="Change annotation author name">
+						Change Annotation Name
+					</button>
+				</Toolbar>
 				<div>
 					{state.sidebarOpen === true
 						&& <Sidebar
@@ -217,7 +240,7 @@ const ReaderUI = React.forwardRef((props, ref) => {
 									filter={state.filter}
 									annotations={state.annotations}
 									selectedIDs={state.selectedAnnotationIDs}
-									authorName="test"
+									authorName={authorName}
 									onSelectAnnotations={props.onSelectAnnotations}
 									onUpdateAnnotations={props.onUpdateAnnotations}
 									onSetDataTransferAnnotations={props.onSetDataTransferAnnotations}
@@ -339,6 +362,7 @@ ReaderUI.propTypes = {
 	onOpenThemeContextMenu: PropTypes.func,
 	onSaveCustomThemes: PropTypes.func,
 	onCloseThemePopup: PropTypes.func,
+	onChangeAuthorName: PropTypes.func,
 	// Add other props as needed
 };
 

@@ -38,7 +38,6 @@ async function createReader() {
 		sidebarWidth: 240,
 		bottomPlaceholderHeight: null,
 		toolbarPlaceholderWidth: 0,
-		authorName: 'John',
 		showAnnotations: true,
 		// platform: 'web',
 		// password: 'test',

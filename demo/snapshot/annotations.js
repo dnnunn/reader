@@ -13,9 +13,7 @@ export default [
 		tags: [],
 		id: "ZVQG2R4M",
 		dateCreated: "2023-05-09T17:05:57.843Z",
-		dateModified: "2025-04-10T15:46:04.895Z",
-		authorName: "John",
-		isAuthorNameAuthoritative: true
+		dateModified: "2025-04-10T15:46:04.895Z"
 	},
 	{
 		type: "note",
@@ -30,9 +28,7 @@ export default [
 		tags: [],
 		id: "UIRHN27J",
 		dateCreated: "2023-05-09T17:05:02.325Z",
-		dateModified: "2025-04-10T15:46:04.895Z",
-		authorName: "John",
-		isAuthorNameAuthoritative: true
+		dateModified: "2025-04-10T15:46:04.895Z"
 	},
 	{
 		type: "note",
@@ -47,9 +43,7 @@ export default [
 		tags: [],
 		id: "NQV7SU47",
 		dateCreated: "2023-05-09T17:11:35.478Z",
-		dateModified: "2025-04-10T15:46:04.895Z",
-		authorName: "John",
-		isAuthorNameAuthoritative: true
+		dateModified: "2025-04-10T15:46:04.895Z"
 	},
 	{
 		type: "highlight",
@@ -70,9 +64,7 @@ export default [
 		tags: [],
 		id: "73N2RIZ5",
 		dateCreated: "2023-05-09T17:05:30.346Z",
-		dateModified: "2025-04-10T15:46:04.895Z",
-		authorName: "John",
-		isAuthorNameAuthoritative: true
+		dateModified: "2025-04-10T15:46:04.895Z"
 	},
 	{
 		type: "underline",
@@ -87,15 +79,13 @@ export default [
 				end: 62
 			}
 		},
-		text: "click the “…” button",
+		text: "click the '...' button",
 		pageLabel: "",
 		comment: "",
 		tags: [],
 		id: "N4IFWQZX",
 		dateCreated: "2023-06-23T18:59:44.374Z",
-		dateModified: "2025-04-10T15:46:04.895Z",
-		authorName: "John",
-		isAuthorNameAuthoritative: true
+		dateModified: "2025-04-10T15:46:04.895Z"
 	},
 	{
 		type: "highlight",
@@ -116,9 +106,7 @@ export default [
 		tags: [],
 		id: "MVMY3NWI",
 		dateCreated: "2023-05-09T17:05:16.087Z",
-		dateModified: "2025-04-10T15:46:04.895Z",
-		authorName: "John",
-		isAuthorNameAuthoritative: true
+		dateModified: "2025-04-10T15:46:04.895Z"
 	},
 	{
 		type: "underline",
@@ -134,9 +122,7 @@ export default [
 		tags: [],
 		id: "5RAMSIAA",
 		dateCreated: "2023-06-23T18:59:31.824Z",
-		dateModified: "2025-04-10T15:46:04.895Z",
-		authorName: "John",
-		isAuthorNameAuthoritative: true
+		dateModified: "2025-04-10T15:46:04.895Z"
 	},
 	{
 		type: "highlight",
@@ -157,8 +143,6 @@ export default [
 		tags: [],
 		id: "RL69GNWI",
 		dateCreated: "2023-05-09T17:05:51.707Z",
-		dateModified: "2025-04-10T15:46:04.895Z",
-		authorName: "John",
-		isAuthorNameAuthoritative: true
+		dateModified: "2025-04-10T15:46:04.895Z"
 	}
 ];

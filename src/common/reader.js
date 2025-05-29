@@ -151,7 +151,7 @@ class Reader {
 				authors: []
 			},
 			readOnly: options.readOnly !== undefined ? options.readOnly : false,
-			authorName: typeof options.authorName === 'string' ? options.authorName : '',
+			authorName: '',
 			fontSize: options.fontSize || 1,
 			fontFamily: options.fontFamily,
 			hyphenate: options.hyphenate,
@@ -164,7 +164,7 @@ class Reader {
 			autoDisableImageTool: options.autoDisableImageTool !== undefined ? options.autoDisableImageTool : true,
 			textSelectionAnnotationMode: options.textSelectionAnnotationMode || 'highlight',
 			colorScheme: options.colorScheme,
-			tool: this._tools['pointer'], // Must always be a reference to one of this._tools objects
+			tool: this._tools.pointer,
 			thumbnails: [],
 			outline: null, // null — loading, [] — empty
 			outlineQuery: '',
@@ -241,7 +241,7 @@ class Reader {
 
 		this._annotationManager = new AnnotationManager({
 			readOnly: this._state.readOnly,
-			authorName: options.authorName,
+			authorName: '',
 			annotations: options.annotations,
 			tools: this._tools,
 			onSave: this._onSaveAnnotations,
@@ -309,6 +309,12 @@ class Reader {
 								this.setSidebarWidth(width);
 								this._onChangeSidebarWidth(width);
 							}}
+							onChangeAuthorName={(newName) => {
+								this._state.authorName = newName;
+								if (this._annotationManager) {
+									this._annotationManager._authorName = newName;
+								}
+							}}
 							onChangeTheme={(theme) => {
 								if (getCurrentColorScheme(this._state.colorScheme) === 'dark') {
 									// For Zotero client use prefs to change theme
@@ -336,7 +342,7 @@ class Reader {
 									// Temporary until web library supports fluent
 									if (!document.l10n) return;
 									let annotationType = await document.l10n.formatValue(`pdfReader-${annotation.type}Annotation`);
-									let msg = await document.l10n.formatValue('pdfReader-a11yAnnotationCreated', { type : annotationType } );
+									let msg = await document.l10n.formatValue('pdfReader-a11yAnnotationCreated', { type: annotationType });
 									this.setA11yMessage(msg);
 								}, 100);
 								if (select) {
@@ -711,7 +717,7 @@ class Reader {
 
 	setReadOnly(readOnly) {
 		// Also unset any active tool
-		this._updateState({ readOnly, tool: this._tools['pointer'] });
+		this._updateState({ readOnly, tool: this._tools.pointer });
 	}
 
 	toggleHandTool(enable) {
@@ -904,7 +910,7 @@ class Reader {
 				// Temporary until web library supports fluent
 				if (!document.l10n) return;
 				let annotationType = await document.l10n.formatValue(`pdfReader-${annotation.type}Annotation`);
-				let msg = await document.l10n.formatValue('pdfReader-a11yAnnotationCreated', { type : annotationType } );
+				let msg = await document.l10n.formatValue('pdfReader-a11yAnnotationCreated', { type: annotationType });
 				this.setA11yMessage(msg);
 			}, 100);
 			if (select) {
@@ -1050,6 +1056,7 @@ class Reader {
 			viewState: this._state[primary ? 'primaryViewState' : 'secondaryViewState'],
 			location,
 			annotationManager: this._annotationManager,
+			authorName: '',
 			onChangeViewState,
 			onChangeViewStats,
 			onSetDataTransferAnnotations: this._handleSetDataTransferAnnotations.bind(this),
@@ -1298,7 +1305,7 @@ class Reader {
 				deleteIDs.push(annotation.id);
 			}
 		}
-		this._annotationManager.deleteAnnotations(deleteIDs)
+		this._annotationManager.deleteAnnotations(deleteIDs);
 
 		// Prevent accidental annotation deselection if modifier is pressed
 		let shift = triggeringEvent ? triggeringEvent.shiftKey : this._keyboardManager.shift;
@@ -1404,7 +1411,7 @@ class Reader {
 					setTimeout(async () => {
 						// Temporary until web library supports fluent
 						if (!document.l10n) return;
-						let annotationType =  await document.l10n.formatValue(`pdfReader-${annotation.type}Annotation`);
+						let annotationType = await document.l10n.formatValue(`pdfReader-${annotation.type}Annotation`);
 						let a11yAnnouncement = await document.l10n.formatValue('pdfReader-a11yAnnotationSelected', { type: annotationType });
 						// Announce if there is a popup.
 						if (document.querySelector('.annotation-popup')) {
