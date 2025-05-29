@@ -1,0 +1,18 @@
+{
+    "pdfReader.convertSearchResults": {
+        "message": "Convert Search Results to Annotations",
+        "description": "Button to convert search results to permanent annotations"
+    },
+    "pdfReader.convertSearchResultsSuccess": {
+        "message": "Successfully converted {count} search results to annotations",
+        "description": "Success message when converting search results to annotations"
+    },
+    "pdfReader.convertSearchResultsError": {
+        "message": "Failed to convert search results to annotations",
+        "description": "Error message when converting search results to annotations fails"
+    },
+    "pdfReader.makeHighlightsPermanent": {
+        "message": "Make highlights permanent",
+        "description": "Checkbox to convert search result highlights to permanent annotations"
+    }
+} 

@@ -9,6 +9,7 @@ import { IconColor16 } from '../common/icons';
 
 import IconHighlight from '../../../../res/icons/16/annotate-highlight.svg';
 import IconUnderline from '../../../../res/icons/16/annotate-underline.svg';
+import IconSearch from '../../../../res/icons/16/search.svg';
 
 function SelectionPopup(props) {
 	const intl = useIntl();
@@ -20,6 +21,15 @@ function SelectionPopup(props) {
 
 	function handleAddToNote() {
 		props.onAddToNote([props.params.annotation]);
+	}
+
+	function handleConvertSearchResults() {
+		if (props.onConvertSearchResults) {
+			props.onConvertSearchResults({
+				type: props.textSelectionAnnotationMode,
+				color: ANNOTATION_COLORS[0][1] // Default to yellow
+			});
+		}
 	}
 
 	return (
@@ -51,6 +61,14 @@ function SelectionPopup(props) {
 					title={intl.formatMessage({ id: 'pdfReader.underlineText' })}
 					onClick={() => props.onChangeTextSelectionAnnotationMode('underline')}
 				><IconUnderline/></button>
+				{props.hasSearchResults && (
+					<button
+						tabIndex={-1}
+						className="convert-search"
+						title={intl.formatMessage({ id: 'pdfReader.convertSearchResults' })}
+						onClick={handleConvertSearchResults}
+					><IconSearch/></button>
+				)}
 			</div>
 			{props.enableAddToNote &&
 				<button className="toolbar-button wide-button" data-tabstop={1} onClick={handleAddToNote}>

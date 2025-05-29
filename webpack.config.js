@@ -162,6 +162,12 @@ function generateReaderConfig(build) {
 			open: '/dev/reader.html?type=pdf',
 			port: 3000,
 		};
+		config.watch = true;
+		config.watchOptions = {
+			ignored: /node_modules/,
+			aggregateTimeout: 300,
+			poll: 1000
+		};
 	}
 
 	return config;

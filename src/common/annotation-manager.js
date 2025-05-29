@@ -16,7 +16,7 @@ class AnnotationManager {
 			authors: [],
 			hiddenIDs: [],
 		};
-		this._readOnly = options.readOnly;
+		this._readOnly = typeof options.readOnly === 'undefined' ? false : options.readOnly;
 		this._authorName = options.authorName;
 		this._annotations = options.annotations;
 		this._onChangeFilter = options.onChangeFilter;
@@ -36,6 +36,7 @@ class AnnotationManager {
 		this._redoStack = [];
 
 		this._annotations.sort((a, b) => (a.sortIndex > b.sortIndex) - (a.sortIndex < b.sortIndex));
+		console.log('[AnnotationManager] Initial annotations:', this._annotations.map(a => a.id));
 
 		// Necessary to set reader._state.annotation for the first time
 		this.render();
@@ -64,6 +65,7 @@ class AnnotationManager {
 	}
 
 	addAnnotation(annotation) {
+		console.log('[AnnotationManager] addAnnotation called with:', annotation);
 		if (this._readOnly) {
 			return null;
 		}
@@ -81,8 +83,10 @@ class AnnotationManager {
 		annotation.text = annotation.text || '';
 		annotation.comment = annotation.comment || '';
 		annotation.tags = annotation.tags || [];
-		// Automatically set properties
-		annotation.id = this._generateObjectKey();
+		// Only generate a new ID if one is not provided
+		if (!annotation.id) {
+			annotation.id = this._generateObjectKey();
+		}
 		annotation.dateCreated = (new Date()).toISOString();
 		annotation.dateModified = annotation.dateCreated;
 		annotation.authorName = this._authorName;
@@ -102,6 +106,12 @@ class AnnotationManager {
 	}
 
 	updateAnnotations(annotations) {
+		console.log('[AnnotationManager] updateAnnotations called. Current annotation IDs:', this._annotations.map(a => a.id));
+		console.log('[AnnotationManager] updateAnnotations incoming annotation IDs:', annotations.map(a => a.id));
+		if (typeof this._readOnly === 'undefined') {
+			console.error('AnnotationManager.updateAnnotations: this._readOnly is undefined! Forcing to false.', this, new Error().stack);
+			this._readOnly = false;
+		}
 		let changedAnnotations = new Map();
 		// Validate data
 		for (let annotation of annotations) {
@@ -109,6 +119,10 @@ class AnnotationManager {
 				throw new Error(`If updating 'position', 'sortIndex' has to be provided as well`);
 			}
 			let existingAnnotation = this._getAnnotationByID(annotation.id);
+			if (!existingAnnotation) {
+				console.error(`[AnnotationManager] Annotation with id ${annotation.id} not found. Current annotation IDs:`, this._annotations.map(a => a.id));
+				throw new Error(`Annotation with id ${annotation.id} not found in updateAnnotations`);
+			}
 			if (existingAnnotation.readOnly && !(annotation.image && Object.keys(annotation).length === 2)) {
 				throw new Error('Cannot update read-only annotation');
 			}
@@ -144,6 +158,7 @@ class AnnotationManager {
 				annotation = {
 					...existingAnnotation,
 					...annotation,
+					pageLabel: annotation.pageLabel || existingAnnotation.pageLabel || ''
 				};
 			}
 			else {
@@ -153,6 +168,7 @@ class AnnotationManager {
 				annotation = {
 					...existingAnnotation,
 					...annotation,
+					pageLabel: annotation.pageLabel || existingAnnotation.pageLabel || '',
 					position: { ...existingAnnotation.position, ...annotation.position }
 				};
 				if (!annotation.image) {
@@ -177,10 +193,13 @@ class AnnotationManager {
 			changedAnnotations.set(annotation.id, annotation);
 		}
 		this._applyChanges(changedAnnotations);
+		console.log('[AnnotationManager] updateAnnotations after update. Annotation IDs:', this._annotations.map(a => a.id));
 		this.render();
 	}
 
 	deleteAnnotations(ids) {
+		console.log('[AnnotationManager] deleteAnnotations called with:', ids);
+		console.trace('[AnnotationManager] deleteAnnotations call stack');
 		let someExternal = this._annotations.some(
 			annotation => ids.includes(annotation.id) && annotation.isExternal
 		);
@@ -319,12 +338,9 @@ class AnnotationManager {
 		}
 		this._lastChangeTime = Date.now();
 		let annotations = new Map(this._annotations.map(x => [x.id, x]));
-		for (let [id, changedAnnotation] of changedAnnotations) {
-			changedAnnotation = changedAnnotation && { ...changedAnnotation };
-			if (changedAnnotation && !this._unsavedAnnotations.get(id)?.image) {
-				delete changedAnnotation.image;
-			}
-			this._unsavedAnnotations.set(id, changedAnnotation);
+		for (let [id] of changedAnnotations) {
+			let existingAnnotation = annotations.get(id);
+			this._unsavedAnnotations.set(id, existingAnnotation);
 		}
 		this._historySave(changedAnnotations);
 		annotations = new Map([...annotations, ...changedAnnotations]);
@@ -465,7 +481,7 @@ class AnnotationManager {
 		let annotations = new Map(this._annotations.map(x => [x.id, x]));
 
 		let oldAnnotations = new Map();
-		for (let [id, changedAnnotation] of changedAnnotations) {
+		for (let [id] of changedAnnotations) {
 			let existingAnnotation = annotations.get(id);
 			oldAnnotations.set(id, existingAnnotation);
 		}
@@ -479,7 +495,7 @@ class AnnotationManager {
 			prevPoint && point
 			&& prevPoint.size === 1 && point.size === 1 && oldAnnotations.size === 1
 		) {
-			let [id1, annotation1] = [...prevPoint][0];
+			let [id1] = [...prevPoint][0];
 			let [id2, annotation2] = [...point][0];
 			let [id3, annotation3] = [...oldAnnotations][0];
 			if (id1 === id2 && id2 === id3) {

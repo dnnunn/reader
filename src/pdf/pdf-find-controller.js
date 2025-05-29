@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-Promise.withResolvers || (Promise.withResolvers = function withResolvers() {
+Promise.withResolvers || (Promise.withResolvers = function() {
 	var a, b, c = new this(function (resolve, reject) {
 		a = resolve;
 		b = reject;
@@ -26,6 +26,7 @@ Promise.withResolvers || (Promise.withResolvers = function withResolvers() {
 });
 
 import { getRangeRects } from './lib/utilities';
+import { getSortIndex } from './selection';
 
 // pdf_find_utils.js [
 const CharacterType = {
@@ -49,8 +50,8 @@ function isAscii(charCode) {
 
 function isAsciiAlpha(charCode) {
 	return (
-		(charCode >= /* a = */ 0x61 && charCode <= /* z = */ 0x7a) ||
-		(charCode >= /* A = */ 0x41 && charCode <= /* Z = */ 0x5a)
+		(charCode >= /* a = */ 0x61 && charCode <= /* z = */ 0x7a)
+		|| (charCode >= /* A = */ 0x41 && charCode <= /* Z = */ 0x5a)
 	);
 }
 
@@ -60,17 +61,17 @@ function isAsciiDigit(charCode) {
 
 function isAsciiSpace(charCode) {
 	return (
-		charCode === /* SPACE = */ 0x20 ||
-		charCode === /* TAB = */ 0x09 ||
-		charCode === /* CR = */ 0x0d ||
-		charCode === /* LF = */ 0x0a
+		charCode === /* SPACE = */ 0x20
+		|| charCode === /* TAB = */ 0x09
+		|| charCode === /* CR = */ 0x0d
+		|| charCode === /* LF = */ 0x0a
 	);
 }
 
 function isHan(charCode) {
 	return (
-		(charCode >= 0x3400 && charCode <= 0x9fff) ||
-		(charCode >= 0xf900 && charCode <= 0xfaff)
+		(charCode >= 0x3400 && charCode <= 0x9fff)
+		|| (charCode >= 0xf900 && charCode <= 0xfaff)
 	);
 }
 
@@ -101,9 +102,9 @@ function getCharacterType(charCode) {
 				return CharacterType.SPACE;
 			}
 			else if (
-				isAsciiAlpha(charCode) ||
-				isAsciiDigit(charCode) ||
-				charCode === /* UNDERSCORE = */ 0x5f
+				isAsciiAlpha(charCode)
+				|| isAsciiDigit(charCode)
+				|| charCode === /* UNDERSCORE = */ 0x5f
 			) {
 				return CharacterType.ALPHA_LETTER;
 			}
@@ -637,12 +638,13 @@ class PDFFindController {
 	/**
 	 * @param {PDFFindControllerOptions} options
 	 */
-	constructor({ linkService, onNavigate, onUpdateMatches, onUpdateState }) {
+	constructor({ linkService, onNavigate, onUpdateMatches, onUpdateState, getPdfPages }) {
 		this._linkService = linkService;
 		this._onNavigate = onNavigate;
 		this._onUpdateMatches = onUpdateMatches;
 		this._onUpdateState = onUpdateState;
 		this._charMapping = [];
+		this._getPdfPages = getPdfPages;
 
 		/**
 		 * Callback used to check if a `pageNumber` is currently visible.
@@ -1329,7 +1331,7 @@ class PDFFindController {
 				for (let j = 0; j < pageMatches.length; j++) {
 					let offsetStart = this._pageMatches[i][j];
 					let offsetEnd = offsetStart + this._pageMatchesLength[i][j];
-					let snippet = getSnippet(this._pageContents[i], offsetStart, offsetEnd, 5, 5);
+					let snippet = getSnippet(this._pageContents[i], offsetStart, offsetEnd, 5);
 					snippets.push(snippet);
 				}
 			}
@@ -1372,6 +1374,94 @@ class PDFFindController {
 			matchesCount: this._requestMatchesCount(),
 			rawQuery: this._state?.query ?? null,
 		});
+	}
+
+	/**
+	 * Generates a unique key for an annotation
+	 * @returns {string} A unique key
+	 */
+	_generateObjectKey() {
+		return 'annotation_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+	}
+
+	/**
+	 * Converts all current search results to permanent annotations
+	 * @param {Object} options - Options for annotation creation
+	 * @param {string} options.type - Type of annotation ('highlight' or 'underline')
+	 * @param {string} options.color - Color for the annotations
+	 * @returns {Array} Array of created annotations
+	 */
+	async convertSearchResultsToAnnotations(options) {
+		console.log('convertSearchResultsToAnnotations called with options:', options);
+		if (!this._pageMatches || !this._pageMatches.length) {
+			console.log('No page matches, returning empty array');
+			return [];
+		}
+		if (!this._pageContents) {
+			console.error('this._pageContents is undefined!');
+			return [];
+		}
+		const pdfPages = this._getPdfPages ? this._getPdfPages() : undefined;
+		if (!pdfPages) {
+			console.error('pdfPages is undefined!');
+			return [];
+		}
+
+		const annotations = [];
+		const { type = 'highlight', color = '#ffff00' } = options;
+
+		// Iterate through all pages with matches
+		for (let pageIndex = 0; pageIndex < this._pageMatches.length; pageIndex++) {
+			const pageMatches = this._pageMatches[pageIndex];
+			if (!pageMatches) continue;
+
+			// Get text content for this page
+			const pageContent = this._pageContents[pageIndex];
+			if (!pageContent) {
+				console.warn('No pageContent for pageIndex', pageIndex);
+				continue;
+			}
+
+			// Ensure page data is available
+			if (!pdfPages[pageIndex]) {
+				console.warn('No pdfPages for pageIndex', pageIndex);
+				continue;
+			}
+
+			// Create annotation for each match
+			for (let matchIndex = 0; matchIndex < pageMatches.length; matchIndex++) {
+				const startOffset = pageMatches[matchIndex];
+				const length = this._pageMatchesLength[pageIndex][matchIndex];
+				const endOffset = startOffset + length;
+
+				// Get the matched text
+				const text = pageContent.slice(startOffset, endOffset);
+
+				// Get position rects
+				const rects = this.getMatchPositions(pageIndex, pdfPages[pageIndex])[matchIndex].rects;
+				const position = { pageIndex, rects };
+
+				// Compute sortIndex
+				const sortIndex = getSortIndex(pdfPages, position);
+
+				// Create annotation object
+				const annotation = {
+					type,
+					color,
+					text,
+					position,
+					sortIndex,
+					pageLabel: (this._getPageLabel ? this._getPageLabel(pageIndex) : (pageIndex + 1).toString()),
+					dateModified: new Date().toISOString(),
+					id: this._generateObjectKey()
+				};
+
+				annotations.push(annotation);
+			}
+		}
+
+		console.log('Annotations created:', annotations);
+		return annotations;
 	}
 }
 

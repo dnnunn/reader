@@ -1,5 +1,4 @@
-import React, { Fragment, useState, useCallback, useEffect, useRef, useImperativeHandle } from 'react';
-import cx from 'classnames';
+import React, { Fragment, useState, useRef, useImperativeHandle } from 'react';
 import Toolbar from './toolbar';
 import Sidebar from './sidebar/sidebar';
 import SelectionPopup from './view-popup/selection-popup';
@@ -17,6 +16,7 @@ import PasswordPopup from './modal-popup/password-popup';
 import PrintPopup from './modal-popup/print-popup';
 import AppearancePopup from "./modal-popup/appearance-popup";
 import ThemePopup from './modal-popup/theme-popup';
+import PropTypes from 'prop-types';
 
 
 function View(props) {
@@ -36,8 +36,19 @@ function View(props) {
 		props.onFindPrevious(primary);
 	}
 
-	function handleOverlayPopupClose() {
-		props.onCloseOverlayPopup(primary);
+	async function handleConvertSearchResults() {
+		console.log('handleConvertSearchResults called', { pdfView: props.pdfView, tools: props.tools });
+		// Find the PDFView instance for this view
+		if (props.pdfView && typeof props.pdfView._handleConvertSearchResults === 'function') {
+			// Use highlight color from tools or default to yellow
+			const color = (props.tools && props.tools.highlight && props.tools.highlight.color) || '#ffff00';
+			console.log('Calling _handleConvertSearchResults with color:', color);
+			await props.pdfView._handleConvertSearchResults({ type: 'highlight', color });
+		} else {
+			console.log('No valid pdfView or _handleConvertSearchResults function');
+			// fallback: do nothing or show error
+			// Optionally, you could show a notification here
+		}
 	}
 
 	return (
@@ -48,8 +59,8 @@ function View(props) {
 				data-proxy={`#${name}-view > iframe`}
 				style={{ position: 'absolute' }}
 			/>
-			{state[name + 'ViewSelectionPopup'] && !state.readOnly &&
-				<SelectionPopup
+			{state[name + 'ViewSelectionPopup'] && !state.readOnly
+				&& <SelectionPopup
 					params={state[name + 'ViewSelectionPopup']}
 					textSelectionAnnotationMode={state.textSelectionAnnotationMode}
 					enableAddToNote={state.enableAddToNote}
@@ -74,32 +85,55 @@ function View(props) {
 					onOpenPageLabelPopup={props.onOpenPageLabelPopup}
 					onOpenAnnotationContextMenu={props.onOpenAnnotationContextMenu}
 					onSetDataTransferAnnotations={props.onSetDataTransferAnnotations}
-				/>}
-			{state[name + 'ViewOverlayPopup'] &&
-				<OverlayPopup
+				/>
+			}
+			{state[name + 'ViewOverlayPopup']
+				&& <OverlayPopup
 					params={state[name + 'ViewOverlayPopup']}
 					onOpenLink={props.onOpenLink}
 					onNavigate={props.onNavigate}
-					onClose={handleOverlayPopupClose}
+					onClose={props.onCloseOverlayPopup}
 				/>
 			}
-			{state[name + 'ViewFindState'].popupOpen &&
-				<FindPopup
+			{state[name + 'ViewFindState'].popupOpen
+				&& <FindPopup
 					params={state[name + 'ViewFindState']}
 					onChange={handleFindStateChange}
 					onFindNext={handleFindNext}
 					onFindPrevious={handleFindPrevious}
 					onAddAnnotation={props.onAddAnnotation}
 					tools={props.tools}
+					onConvertSearchResults={handleConvertSearchResults}
 				/>
 			}
 		</div>
 	);
 }
 
+View.propTypes = {
+	pdfView: PropTypes.object,
+	primary: PropTypes.bool,
+	state: PropTypes.object.isRequired,
+	onChangeFindState: PropTypes.func.isRequired,
+	onFindNext: PropTypes.func.isRequired,
+	onFindPrevious: PropTypes.func.isRequired,
+	onCloseOverlayPopup: PropTypes.func.isRequired,
+	tools: PropTypes.object,
+	onAddAnnotation: PropTypes.func,
+	onUpdateAnnotations: PropTypes.func,
+	onAddToNote: PropTypes.func,
+	onChangeTextSelectionAnnotationMode: PropTypes.func,
+	onOpenTagsPopup: PropTypes.func,
+	onOpenPageLabelPopup: PropTypes.func,
+	onOpenAnnotationContextMenu: PropTypes.func,
+	onSetDataTransferAnnotations: PropTypes.func,
+	onOpenLink: PropTypes.func,
+	onNavigate: PropTypes.func,
+	type: PropTypes.string
+};
+
 const ReaderUI = React.forwardRef((props, ref) => {
 	let [state, setState] = useState(props.state);
-	let sidebarRef = useRef();
 	let annotationsViewRef = useRef();
 
 	useImperativeHandle(ref, () => ({
@@ -154,8 +188,8 @@ const ReaderUI = React.forwardRef((props, ref) => {
 					onToggleContextPane={props.onToggleContextPane}
 				/>
 				<div>
-					{state.sidebarOpen === true &&
-						<Sidebar
+					{state.sidebarOpen === true
+						&& <Sidebar
 							type={props.type}
 							view={state.sidebarView}
 							filter={state.filter}
@@ -255,5 +289,57 @@ const ReaderUI = React.forwardRef((props, ref) => {
 		</Fragment>
 	);
 });
+
+ReaderUI.displayName = 'ReaderUI';
+
+ReaderUI.propTypes = {
+	type: PropTypes.string,
+	state: PropTypes.object.isRequired,
+	onChangeTheme: PropTypes.func,
+	onToggleSidebar: PropTypes.func,
+	onZoomIn: PropTypes.func,
+	onZoomOut: PropTypes.func,
+	onZoomReset: PropTypes.func,
+	onNavigateBack: PropTypes.func,
+	onNavigateToPreviousPage: PropTypes.func,
+	onNavigateToNextPage: PropTypes.func,
+	onChangePageNumber: PropTypes.func,
+	onChangeTool: PropTypes.func,
+	onOpenColorContextMenu: PropTypes.func,
+	onToggleAppearancePopup: PropTypes.func,
+	onToggleFind: PropTypes.func,
+	onToggleContextPane: PropTypes.func,
+	onUpdateOutline: PropTypes.func,
+	onUpdateOutlineQuery: PropTypes.func,
+	onChangeSidebarView: PropTypes.func,
+	onChangeFilter: PropTypes.func,
+	onOpenThumbnailContextMenu: PropTypes.func,
+	onRenderThumbnails: PropTypes.func,
+	onNavigate: PropTypes.func,
+	onSelectAnnotations: PropTypes.func,
+	onUpdateAnnotations: PropTypes.func,
+	onSetDataTransferAnnotations: PropTypes.func,
+	onOpenTagsPopup: PropTypes.func,
+	onOpenPageLabelPopup: PropTypes.func,
+	onOpenAnnotationContextMenu: PropTypes.func,
+	onOpenSelectorContextMenu: PropTypes.func,
+	onOpenLink: PropTypes.func,
+	onResizeSidebar: PropTypes.func,
+	onResizeSplitView: PropTypes.func,
+	onCloseContextMenu: PropTypes.func,
+	onCloseLabelPopup: PropTypes.func,
+	onEnterPassword: PropTypes.func,
+	onChangeSplitType: PropTypes.func,
+	onChangeScrollMode: PropTypes.func,
+	onChangeSpreadMode: PropTypes.func,
+	onChangeFlowMode: PropTypes.func,
+	onChangeAppearance: PropTypes.func,
+	onChangeFocusModeEnabled: PropTypes.func,
+	onAddTheme: PropTypes.func,
+	onOpenThemeContextMenu: PropTypes.func,
+	onSaveCustomThemes: PropTypes.func,
+	onCloseThemePopup: PropTypes.func,
+	// Add other props as needed
+};
 
 export default ReaderUI;

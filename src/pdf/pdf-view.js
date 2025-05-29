@@ -127,6 +127,7 @@ class PDFView {
 
 		this._findState = options.findState;
 
+		this._annotationManager = options.annotationManager;
 
 		// Create a MediaQueryList object
 		let darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
@@ -359,7 +360,8 @@ class PDFView {
 				}
 				this._onSetFindState({ ...this._findState, result });
 				this._render();
-			}
+			},
+			getPdfPages: () => this._pdfPages
 		});
 	}
 
@@ -3578,6 +3580,28 @@ class PDFView {
 			x,
 			y,
 		};
+	}
+
+	/**
+	 * Handles converting search results to annotations
+	 * @param {Object} options - Options for annotation creation
+	 */
+	async _handleConvertSearchResults(options) {
+		console.log('_handleConvertSearchResults called with options:', options);
+		if (!this._findController) return;
+
+		// Get annotations from search results
+		const annotations = await this._findController.convertSearchResultsToAnnotations(options);
+		console.log('Annotations returned from convertSearchResultsToAnnotations:', annotations);
+		if (!annotations.length) return;
+
+		// Add each annotation individually using addAnnotation to ensure they're treated as new
+		for (const annotation of annotations) {
+			this._annotationManager.addAnnotation(annotation);
+		}
+
+		// Clear search results
+		this._findController.onClose();
 	}
 }
 

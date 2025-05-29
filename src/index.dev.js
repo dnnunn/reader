@@ -33,7 +33,7 @@ async function createReader() {
 			url: new URL('/', window.location).toString()
 		},
 		// rtl: true,
-		annotations: demo.annotations,
+		annotations: demo.annotations || [],
 		primaryViewState: demo.state,
 		sidebarWidth: 240,
 		bottomPlaceholderHeight: null,
@@ -75,7 +75,7 @@ async function createReader() {
 		onSetDataTransferAnnotations(dataTransfer, annotations, fromText) {
 			console.log('Set formatted dataTransfer annotations', dataTransfer, annotations, fromText);
 		},
-		onConfirm(title, text, confirmationButtonTitle) {
+		onConfirm(title, text, _confirmationButtonTitle) {
 			return window.confirm(text);
 		},
 		onRotatePages(pageIndexes, degrees) {

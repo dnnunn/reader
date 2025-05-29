@@ -287,6 +287,7 @@ class Reader {
 							state={this._state}
 							ref={this._readerRef}
 							tools={this._tools}
+							pdfView={this._primaryView}
 							onSelectAnnotations={this.setSelectedAnnotations.bind(this)}
 							onZoomIn={this.zoomIn.bind(this)}
 							onZoomOut={this.zoomOut.bind(this)}
@@ -1048,6 +1049,7 @@ class Reader {
 			findState: this._state[primary ? 'primaryViewFindState' : 'secondaryViewFindState'],
 			viewState: this._state[primary ? 'primaryViewState' : 'secondaryViewState'],
 			location,
+			annotationManager: this._annotationManager,
 			onChangeViewState,
 			onChangeViewStats,
 			onSetDataTransferAnnotations: this._handleSetDataTransferAnnotations.bind(this),
@@ -1079,7 +1081,8 @@ class Reader {
 				onRequestPassword,
 				onSetThumbnails,
 				onSetPageLabels,
-				onDeleteAnnotations // For complete ink erase
+				onDeleteAnnotations, // For complete ink erase
+				annotationManager: this._annotationManager // Pass annotation manager
 			});
 
 			if (primary) {
@@ -1610,7 +1613,7 @@ class Reader {
 			let formatted = '';
 			if (annotation.text) {
 				let text = annotation.text.trim();
-				formatted = fromText ? text : '“' + text + '”';
+				formatted = fromText ? text : '"' + text + '"';
 			}
 			let comment = annotation.comment?.trim();
 			if (comment) {

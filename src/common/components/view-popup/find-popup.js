@@ -3,27 +3,29 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import cx from 'classnames';
 import { debounce } from '../../lib/debounce';
 import { DEBOUNCE_FIND_POPUP_INPUT } from '../../defines';
+import PropTypes from 'prop-types';
 
 import IconChevronUp from '../../../../res/icons/20/chevron-up.svg';
 import IconChevronDown from '../../../../res/icons/20/chevron-down.svg';
 import IconClose from '../../../../res/icons/20/x.svg';
 import { getCodeCombination, getKeyCombination } from '../../lib/utilities';
 
-function FindPopup({ params, onChange, onFindNext, onFindPrevious, onAddAnnotation, tools }) {
+function FindPopup({ params, onChange, onFindNext, onFindPrevious, onAddAnnotation, tools, onConvertSearchResults }) {
 	const intl = useIntl();
 	const inputRef = useRef();
 	const preventInputRef = useRef(false);
 	const [query, setQuery] = useState(params.query);
 	const currentParamsRef = useRef();
+	const [makePermanent, setMakePermanent] = useState(false);
 
 	currentParamsRef.current = params;
 
-	const debounceInputChange = useCallback(debounce(value => {
+	const debounceInputChange = useCallback(debounce(() => {
 		if (!inputRef.current) {
 			return;
 		}
 		let query = inputRef.current.value;
-		if (query !== currentParamsRef.current.query && !(query.length === 1 && RegExp(/^\p{Script=Latin}/, 'u').test(query))) {
+		if (query !== currentParamsRef.current.query && !(query.length === 1 && RegExp(/^[\p{Script=Latin}]/, 'u').test(query))) {
 			onChange({ ...currentParamsRef.current, query, active: true, result: null });
 		}
 	}, DEBOUNCE_FIND_POPUP_INPUT), [onChange]);
@@ -110,6 +112,17 @@ function FindPopup({ params, onChange, onFindNext, onFindPrevious, onAddAnnotati
 		onChange({ ...params, entireWord: event.currentTarget.checked, result: null });
 	}
 
+	async function handleMakePermanentChange(event) {
+		console.log('handleMakePermanentChange called, checked:', event.currentTarget.checked);
+		setMakePermanent(event.currentTarget.checked);
+		if (event.currentTarget.checked && onConvertSearchResults) {
+			console.log('Calling onConvertSearchResults from handleMakePermanentChange');
+			await onConvertSearchResults();
+			// Optionally uncheck after conversion
+			setTimeout(() => setMakePermanent(false), 200);
+		}
+	}
+
 	return (
 		<div className="find-popup" role="application">
 			<div className="row input">
@@ -186,6 +199,17 @@ function FindPopup({ params, onChange, onFindNext, onFindPrevious, onAddAnnotati
 					/>
 					<label htmlFor="entire-word"><FormattedMessage id="pdfReader.wholeWords"/></label>
 				</div>
+				<div className="option">
+					<input
+						id="make-permanent"
+						type="checkbox"
+						tabIndex="-1"
+						checked={makePermanent}
+						onChange={handleMakePermanentChange}
+						disabled={!params.result || params.result.total === 0}
+					/>
+					<label htmlFor="make-permanent"><FormattedMessage id="pdfReader.makeHighlightsPermanent" defaultMessage="Make highlights permanent"/></label>
+				</div>
 			</div>
 			{params.result &&
 				<div className="row result">
@@ -199,5 +223,15 @@ function FindPopup({ params, onChange, onFindNext, onFindPrevious, onAddAnnotati
 		</div>
 	);
 }
+
+FindPopup.propTypes = {
+	params: PropTypes.object.isRequired,
+	onChange: PropTypes.func.isRequired,
+	onFindNext: PropTypes.func.isRequired,
+	onFindPrevious: PropTypes.func.isRequired,
+	onAddAnnotation: PropTypes.func,
+	tools: PropTypes.object,
+	onConvertSearchResults: PropTypes.func
+};
 
 export default FindPopup;
