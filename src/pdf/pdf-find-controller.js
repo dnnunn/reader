@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-Promise.withResolvers || (Promise.withResolvers = function() {
+Promise.withResolvers || (Promise.withResolvers = function () {
 	var a, b, c = new this(function (resolve, reject) {
 		a = resolve;
 		b = reject;
@@ -247,13 +247,44 @@ const CHARACTERS_TO_NORMALIZE = {
 const DIACRITICS_EXCEPTION = new Set([
 	// UNICODE_COMBINING_CLASS_KANA_VOICING
 	// https://www.compart.com/fr/unicode/combining/8
-	0x3099, 0x309a,
+	0x3099,
+	0x309a,
 	// UNICODE_COMBINING_CLASS_VIRAMA (under 0xFFFF)
 	// https://www.compart.com/fr/unicode/combining/9
-	0x094d, 0x09cd, 0x0a4d, 0x0acd, 0x0b4d, 0x0bcd, 0x0c4d, 0x0ccd, 0x0d3b,
-	0x0d3c, 0x0d4d, 0x0dca, 0x0e3a, 0x0eba, 0x0f84, 0x1039, 0x103a, 0x1714,
-	0x1734, 0x17d2, 0x1a60, 0x1b44, 0x1baa, 0x1bab, 0x1bf2, 0x1bf3, 0x2d7f,
-	0xa806, 0xa82c, 0xa8c4, 0xa953, 0xa9c0, 0xaaf6, 0xabed,
+	0x094d,
+	0x09cd,
+	0x0a4d,
+	0x0acd,
+	0x0b4d,
+	0x0bcd,
+	0x0c4d,
+	0x0ccd,
+	0x0d3b,
+	0x0d3c,
+	0x0d4d,
+	0x0dca,
+	0x0e3a,
+	0x0eba,
+	0x0f84,
+	0x1039,
+	0x103a,
+	0x1714,
+	0x1734,
+	0x17d2,
+	0x1a60,
+	0x1b44,
+	0x1baa,
+	0x1bab,
+	0x1bf2,
+	0x1bf3,
+	0x2d7f,
+	0xa806,
+	0xa82c,
+	0xa8c4,
+	0xa953,
+	0xa9c0,
+	0xaaf6,
+	0xabed,
 	// 91
 	// https://www.compart.com/fr/unicode/combining/91
 	0x0c56,
@@ -262,7 +293,12 @@ const DIACRITICS_EXCEPTION = new Set([
 	0x0f71,
 	// 130
 	// https://www.compart.com/fr/unicode/combining/130
-	0x0f72, 0x0f7a, 0x0f7b, 0x0f7c, 0x0f7d, 0x0f80,
+	0x0f72,
+	0x0f7a,
+	0x0f7b,
+	0x0f7c,
+	0x0f7d,
+	0x0f80,
 	// 132
 	// https://www.compart.com/fr/unicode/combining/132
 	0x0f74,
@@ -270,8 +306,8 @@ const DIACRITICS_EXCEPTION = new Set([
 let DIACRITICS_EXCEPTION_STR; // Lazily initialized, see below.
 
 const DIACRITICS_REG_EXP = /\p{M}+/gu;
-const SPECIAL_CHARS_REG_EXP =
-	/([.*+?^${}()|[\]\\])|(\p{P})|(\s+)|(\p{M})|(\p{L})/gu;
+const SPECIAL_CHARS_REG_EXP
+	= /([.*+?^${}()|[\]\\])|(\p{P})|(\s+)|(\p{M})|(\p{L})/gu;
 const NOT_DIACRITIC_FROM_END_REG_EXP = /([^\p{M}])\p{M}*$/u;
 const NOT_DIACRITIC_FROM_START_REG_EXP = /^\p{M}*([^\p{M}])/u;
 
@@ -281,8 +317,8 @@ const SYLLABLES_REG_EXP = /[\uAC00-\uD7AF\uFA6C\uFACF-\uFAD1\uFAD5-\uFAD7]+/g;
 const SYLLABLES_LENGTHS = new Map();
 // When decomposed (in using NFD) the above syllables will start
 // with one of the chars in this regexp.
-const FIRST_CHAR_SYLLABLES_REG_EXP =
-	"[\\u1100-\\u1112\\ud7a4-\\ud7af\\ud84a\\ud84c\\ud850\\ud854\\ud857\\ud85f]";
+const FIRST_CHAR_SYLLABLES_REG_EXP
+	= "[\\u1100-\\u1112\\ud7a4-\\ud7af\\ud84a\\ud84c\\ud850\\ud854\\ud857\\ud85f]";
 
 const NFKC_CHARS_TO_NORMALIZE = new Map();
 
@@ -713,8 +749,8 @@ class PDFFindController {
 			// If the document was closed before searching began, or if the search
 			// operation was relevant for a previously opened document, do nothing.
 			if (
-				!this._pdfDocument ||
-				(pdfDocument && this._pdfDocument !== pdfDocument)
+				!this._pdfDocument
+				|| (pdfDocument && this._pdfDocument !== pdfDocument)
 			) {
 				return;
 			}
@@ -895,10 +931,10 @@ class PDFFindController {
 				// over matches at the top/bottom of pages thus making them completely
 				// inaccessible when there's multiple pages visible in the viewer.
 				return (
-					pageNumber >= 1 &&
-					pageNumber <= linkService.pagesCount &&
-					pageNumber !== linkService.page &&
-					!(this.onIsPageVisible?.(pageNumber) ?? true)
+					pageNumber >= 1
+					&& pageNumber <= linkService.pagesCount
+					&& pageNumber !== linkService.page
+					&& !(this.onIsPageVisible?.(pageNumber) ?? true)
 				);
 			case "highlightallchange":
 				return false;
@@ -944,8 +980,8 @@ class PDFFindController {
 		let match;
 		while ((match = query.exec(pageContent)) !== null) {
 			if (
-				entireWord &&
-				!this._isEntireWord(pageContent, match.index, match[0].length)
+				entireWord
+				&& !this._isEntireWord(pageContent, match.index, match[0].length)
 			) {
 				continue;
 			}
@@ -1049,14 +1085,15 @@ class PDFFindController {
 		else {
 			// Words are sorted in reverse order to be sure that "foobar" is matched
 			// before "foo" in case the query is "foobar foo".
-			query = query.sort().reverse().map(q => {
+			query = query.sort().reverse().map((q) => {
 				const [isUnicodePart, queryPart] = this._convertToRegExpString(
 					q,
 					hasDiacritics
 				);
 				isUnicode ||= isUnicodePart;
 				return `(${queryPart})`;
-			}).join("|");
+			})
+.join("|");
 		}
 
 		const flags = `g${isUnicode ? "u" : ""}${caseSensitive ? "" : "i"}`;
@@ -1185,8 +1222,8 @@ class PDFFindController {
 		if (offset.matchIdx !== null) {
 			const numPageMatches = this._pageMatches[offset.pageIdx].length;
 			if (
-				(!previous && offset.matchIdx + 1 < numPageMatches) ||
-				(previous && offset.matchIdx > 0)
+				(!previous && offset.matchIdx + 1 < numPageMatches)
+				|| (previous && offset.matchIdx > 0)
 			) {
 				// The simple case; we just have advance the matchIdx to select
 				// the next match on the page.
@@ -1287,8 +1324,8 @@ class PDFFindController {
 		this._firstPageCapability.promise.then(() => {
 			// Only update the UI if the document is open, and is the current one.
 			if (
-				!this._pdfDocument ||
-				(pdfDocument && this._pdfDocument !== pdfDocument)
+				!this._pdfDocument
+				|| (pdfDocument && this._pdfDocument !== pdfDocument)
 			) {
 				return;
 			}

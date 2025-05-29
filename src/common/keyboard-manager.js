@@ -142,8 +142,8 @@ export class KeyboardManager {
 				setTimeout(() => this._reader._lastView.focus());
 			}
 			// Switch off the current annotation tool
-			else if (this._reader._state.tool !== this._reader._tools['pointer']) {
-				this._reader._updateState({ tool: this._reader._tools['pointer'] });
+			else if (this._reader._state.tool !== this._reader._tools.pointer) {
+				this._reader._updateState({ tool: this._reader._tools.pointer });
 				event.preventDefault();
 				setTimeout(() => this._reader._lastView.focus());
 			}

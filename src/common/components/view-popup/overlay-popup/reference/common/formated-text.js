@@ -3,7 +3,6 @@ import React from 'react';
 export default function FormattedText({ chars, onOpenLink }) {
 	// Helper function to create JSX from text and its properties
 	function CreateJSX({ text, bold, italic, url }) {
-
 		function handleLinkClick(event) {
 			event.preventDefault();
 			event.stopPropagation();

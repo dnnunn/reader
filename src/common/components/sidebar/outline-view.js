@@ -119,7 +119,7 @@ function Item({ item, id, children, onOpenLink, onUpdate, onSelect }) {
 	);
 }
 
-function OutlineView({ outline, currentOutlinePath, onNavigate, onOpenLink, onUpdate}) {
+function OutlineView({ outline, currentOutlinePath, onNavigate, onOpenLink, onUpdate }) {
 	let containerRef = useRef();
 
 	useEffect(() => {
@@ -224,8 +224,8 @@ function OutlineView({ outline, currentOutlinePath, onNavigate, onOpenLink, onUp
 			<ul>{items.map((item, index) => {
 				counter.n++;
 				return (
-					((item.matched !== false) || (item.childMatched !== false)) &&
-					<Item
+					((item.matched !== false) || (item.childMatched !== false))
+					&& <Item
 						key={index}
 						item={item}
 						id={counter.n}

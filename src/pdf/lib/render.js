@@ -12,7 +12,7 @@ function calculateLines(context, text, maxWidth) {
 	let lines = [];
 	let line = '';
 
-	for(let n = 0; n < words.length; n++) {
+	for (let n = 0; n < words.length; n++) {
 		let testLine = line + words[n] + ' ';
 		let metrics = context.measureText(testLine);
 		let testWidth = metrics.width;
@@ -20,23 +20,26 @@ function calculateLines(context, text, maxWidth) {
 			if (line.trim() === '') { // This is a single word exceeding the maxWidth
 				// We need to split this word
 				let testWord = '';
-				for(let m = 0; m < words[n].length; m++) {
+				for (let m = 0; m < words[n].length; m++) {
 					let testChar = testWord + words[n][m];
 					let metricsChar = context.measureText(testChar);
 					let testCharWidth = metricsChar.width;
 					if (testCharWidth > maxWidth) {
 						lines.push(testWord);
 						testWord = words[n][m];
-					} else {
+					}
+					else {
 						testWord = testChar;
 					}
 				}
 				line = testWord + ' ';
-			} else { // This is a line that would exceed the maxWidth if we add the next word
+			}
+			else { // This is a line that would exceed the maxWidth if we add the next word
 				lines.push(line.trim());
 				line = words[n] + ' ';
 			}
-		} else {
+		}
+		else {
 			line = testLine;
 		}
 	}

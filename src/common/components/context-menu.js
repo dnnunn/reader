@@ -21,7 +21,7 @@ function BasicRow({ item, onClose }) {
 		<button
 			tabIndex={-1}
 			className={cx('row basic', { checked: item.checked })}
-			onClick={(event) => handleClick(event, item)}
+			onClick={event => handleClick(event, item)}
 			disabled={item.disabled}
 		>
 			{item.color && <div className="icon"><IconColor16 color={item.color}/></div>}

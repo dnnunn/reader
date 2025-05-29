@@ -103,7 +103,8 @@ class View {
 			return new EPUBView({
 				...common
 			});
-		} else if (this._type === 'snapshot') {
+		}
+		else if (this._type === 'snapshot') {
 			return new SnapshotView({
 				...common
 			});

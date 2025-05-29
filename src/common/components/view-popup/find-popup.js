@@ -81,7 +81,7 @@ function FindPopup({ params, onChange, onFindNext, onFindPrevious, onAddAnnotati
 		else if (code === 'Ctrl-Alt-Digit1') {
 			preventInputRef.current = true;
 			if (params.result?.annotation) {
-				onAddAnnotation({ ...params.result.annotation, type: 'highlight', color: tools['highlight'].color }, true);
+				onAddAnnotation({ ...params.result.annotation, type: 'highlight', color: tools.highlight.color }, true);
 				// Close popup after adding annotation
 				onChange({ ...params, popupOpen: false, active: false, result: null });
 			}
@@ -89,7 +89,7 @@ function FindPopup({ params, onChange, onFindNext, onFindPrevious, onAddAnnotati
 		else if (code === 'Ctrl-Alt-Digit2') {
 			preventInputRef.current = true;
 			if (params.result?.annotation) {
-				onAddAnnotation({ ...params.result.annotation, type: 'underline', color: tools['underline'].color }, true);
+				onAddAnnotation({ ...params.result.annotation, type: 'underline', color: tools.underline.color }, true);
 				// Close popup after adding annotation
 				onChange({ ...params, popupOpen: false, active: false, result: null });
 			}
@@ -211,8 +211,8 @@ function FindPopup({ params, onChange, onFindNext, onFindPrevious, onAddAnnotati
 					<label htmlFor="make-permanent"><FormattedMessage id="pdfReader.makeHighlightsPermanent" defaultMessage="Make highlights permanent"/></label>
 				</div>
 			</div>
-			{params.result &&
-				<div className="row result">
+			{params.result
+				&& <div className="row result">
 					{
 						params.result.total > 0
 							? (params.result.index + 1 + ' / ' + params.result.total)

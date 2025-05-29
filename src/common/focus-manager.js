@@ -173,7 +173,7 @@ export class FocusManager {
 				return proxy;
 			}
 			return x;
-		}).filter(group =>!group.closest(".viewWrapper.hidden"));
+		}).filter(group => !group.closest(".viewWrapper.hidden"));
 
 
 		if (reverse) {
@@ -222,13 +222,11 @@ export class FocusManager {
 		if (group.hasAttribute('tabindex')) {
 			item = group;
 		}
+		else if (reverse && focusableParent) {
+			item = focusableParent;
+		}
 		else {
-			if (reverse && focusableParent) {
-				item = focusableParent;
-			}
-			else {
-				item = group.querySelector('[tabindex="-1"]:not(:disabled):not(.hidden)');
-			}
+			item = group.querySelector('[tabindex="-1"]:not(:disabled):not(.hidden)');
 		}
 
 		if (!item) {

@@ -325,13 +325,11 @@ class Reader {
 										this.setDarkTheme(theme);
 									}
 								}
+								else if (this._onSetLightTheme) {
+									this._onSetLightTheme(theme);
+								}
 								else {
-									if (this._onSetLightTheme) {
-										this._onSetLightTheme(theme);
-									}
-									else {
-										this.setLightTheme(theme);
-									}
+									this.setLightTheme(theme);
 								}
 							}}
 							onResizeSplitView={this.setSplitViewSize.bind(this)}
@@ -347,7 +345,8 @@ class Reader {
 								}, 100);
 								if (select) {
 									this.setSelectedAnnotations([annotation.id]);
-								} else {
+								}
+								else {
 									this.setSelectedAnnotations([]);
 								}
 							}}
@@ -372,7 +371,7 @@ class Reader {
 							onNavigate={this.navigate.bind(this)}
 							onUpdateOutline={outline => this._updateState({ outline })}
 							onUpdateOutlineQuery={outlineQuery => this._updateState({ outlineQuery })}
-							onRenderThumbnails={(pageIndexes) => this._primaryView._pdfThumbnails.render(pageIndexes)}
+							onRenderThumbnails={pageIndexes => this._primaryView._pdfThumbnails.render(pageIndexes)}
 							onSetDataTransferAnnotations={this._handleSetDataTransferAnnotations.bind(this)}
 							onOpenLink={this._onOpenLink}
 							onChangeAppearance={this._handleAppearanceChange.bind(this)}
@@ -394,9 +393,9 @@ class Reader {
 									this.disableSplitView();
 								}
 							}}
-							onChangeScrollMode={(mode) => this.scrollMode = mode}
-							onChangeSpreadMode={(mode) => this.spreadMode = mode}
-							onChangeFlowMode={(mode) => this.flowMode = mode}
+							onChangeScrollMode={mode => this.scrollMode = mode}
+							onChangeSpreadMode={mode => this.spreadMode = mode}
+							onChangeFlowMode={mode => this.flowMode = mode}
 							onAddTheme={() => this._updateState({ themePopup: {} })}
 							onOpenThemeContextMenu={params => this._onOpenContextMenu(createThemeContextMenu(this, params))}
 							onCloseThemePopup={() => this._updateState({ themePopup: null })}
@@ -726,7 +725,8 @@ class Reader {
 		}
 		if (enable) {
 			this.setTool({ type: 'hand' });
-		} else {
+		}
+		else {
 			this.setTool({ type: 'pointer' });
 		}
 	}
@@ -1022,7 +1022,7 @@ class Reader {
 			this._annotationManager.setFilter({ hiddenIDs: ids });
 		};
 
-		let getLocalizedString = (name) => this._getString(name);
+		let getLocalizedString = name => this._getString(name);
 
 		let data;
 		if (this._type === 'pdf') {
@@ -1103,14 +1103,16 @@ class Reader {
 					pdfView: view
 				});
 			}
-		} else if (this._type === 'epub') {
+		}
+		else if (this._type === 'epub') {
 			view = new EPUBView({
 				...common,
 				fontFamily: this._state.fontFamily,
 				hyphenate: this._state.hyphenate,
 				onEPUBEncrypted,
 			});
-		} else if (this._type === 'snapshot') {
+		}
+		else if (this._type === 'snapshot') {
 			view = new SnapshotView({
 				...common,
 				onSetZoom

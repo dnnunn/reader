@@ -70,8 +70,8 @@ function SelectionPopup(props) {
 					><IconSearch/></button>
 				)}
 			</div>
-			{props.enableAddToNote &&
-				<button className="toolbar-button wide-button" data-tabstop={1} onClick={handleAddToNote}>
+			{props.enableAddToNote
+				&& <button className="toolbar-button wide-button" data-tabstop={1} onClick={handleAddToNote}>
 					<FormattedMessage id="pdfReader.addToNote"/>
 				</button>}
 			<CustomSections type="TextSelectionPopup" annotation={props.params.annotation}/>

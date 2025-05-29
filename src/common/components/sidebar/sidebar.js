@@ -108,8 +108,8 @@ function Sidebar(props) {
 		<div id="sidebarContainer" className="sidebarOpen" role="application">
 			<div className="sidebar-toolbar">
 				<div className="start" data-tabstop={1} role="tablist">
-					{props.type === 'pdf' &&
-						<button
+					{props.type === 'pdf'
+						&& <button
 							id="viewThumbnail"
 							className={cx('toolbar-button', { active: props.view === 'thumbnails' })}
 							tabIndex={-1}
@@ -143,15 +143,15 @@ function Sidebar(props) {
 					><IconOutline/></button>
 				</div>
 				<div className="end">
-					{props.view === 'annotations' &&
-						<SearchBox
+					{props.view === 'annotations'
+						&& <SearchBox
 							query={props.filter.query}
 							onInput={handleSearchInput}
 							placeholder={intl.formatMessage({ id: 'pdfReader.searchAnnotations' })}
 						/>
 					}
-					{props.view === 'outline' &&
-						<SearchBox
+					{props.view === 'outline'
+						&& <SearchBox
 							query={props.outlineQuery}
 							onInput={handleOutlineSearchInput}
 							placeholder={intl.formatMessage({ id: 'pdfReader.searchOutline' })}
@@ -160,13 +160,13 @@ function Sidebar(props) {
 				</div>
 			</div>
 			<div id="sidebarContent" className="sidebar-content">
-				<div className={cx("viewWrapper", { hidden: props.view !== 'thumbnails'})}>
+				<div className={cx("viewWrapper", { hidden: props.view !== 'thumbnails' })}>
 					{props.thumbnailsView}
 				</div>
-				<div id="annotationsView" role="tabpanel" aria-labelledby="viewAnnotations" className={cx("viewWrapper", { hidden: props.view !== 'annotations'})}>
+				<div id="annotationsView" role="tabpanel" aria-labelledby="viewAnnotations" className={cx("viewWrapper", { hidden: props.view !== 'annotations' })}>
 					{props.annotationsView}
 				</div>
-				<div className={cx("viewWrapper", { hidden: props.view !== 'outline'})} role="tabpanel">
+				<div className={cx("viewWrapper", { hidden: props.view !== 'outline' })} role="tabpanel">
 					{props.outlineView}
 				</div>
 			</div>

@@ -37,7 +37,6 @@ export class AutoScroll {
 
 		container.ownerDocument.defaultView.addEventListener('mousemove', this._handleMouseMove.bind(this));
 		container.ownerDocument.defaultView.addEventListener('mouseup', () => this.disable.bind(this));
-
 	}
 
 	_handleMouseMove(event) {

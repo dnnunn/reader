@@ -41,7 +41,7 @@ function Selector({ tags, colors, authors, onContextMenu, onClickTag, onClickCol
 						onClick={() => onClickColor(color.color)}
 						onDragOver={handleDragOver}
 						onDragLeave={handleDragLeave}
-						onDrop={(event) => handleDrop(event, null, color.color)}
+						onDrop={event => handleDrop(event, null, color.color)}
 						role="checkbox"
 						aria-checked={color.selected}
 						aria-description={intl.formatMessage({ id: "pdfReader.tagSelectorMessage" })}
@@ -57,7 +57,7 @@ function Selector({ tags, colors, authors, onContextMenu, onClickTag, onClickCol
 						onClick={() => onClickTag(tag.name)}
 						onDragOver={handleDragOver}
 						onDragLeave={handleDragLeave}
-						onDrop={(event) => handleDrop(event, { name: tag.name, color: tag.color })}
+						onDrop={event => handleDrop(event, { name: tag.name, color: tag.color })}
 						role="checkbox"
 						aria-checked={tag.selected}
 						aria-description={intl.formatMessage({ id: "pdfReader.tagSelectorMessage" })}
@@ -86,7 +86,7 @@ const Annotation = React.memo((props) => {
 			tabIndex={-1}
 			className={cx('annotation', { selected: props.isSelected })}
 			data-sidebar-annotation-id={props.annotation.id}
-			onMouseDown={(event) => event.stopPropagation()}
+			onMouseDown={event => event.stopPropagation()}
 			onFocus={() => props.onFocus(props.annotation.id)}
 			role="option"
 			aria-labelledby={`page_${props.annotation.id}`}

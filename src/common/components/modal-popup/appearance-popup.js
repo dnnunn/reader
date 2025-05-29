@@ -186,7 +186,7 @@ function Theme({ theme, active, onSet, onOpenContextMenu }) {
 		let { x, y } = getPopupCoordinatesFromClickEvent(event);
 		onOpenContextMenu({ theme, x, y });
 
-		if(event.type === 'click') {
+		if (event.type === 'click') {
 			event.currentTarget.classList.add('context-menu-open');
 		}
 	}
@@ -414,13 +414,13 @@ function AppearancePopup(props) {
 									onOpenContextMenu={props.onOpenThemeContextMenu}
 								/>
 							))}
-								<button
+							<button
 								tabIndex={-1}
 								className="theme add"
 								onClick={props.onAddTheme}
 								title={intl.formatMessage({ id: "pdfReader.addTheme" })}
 							><IconPlus/></button>
-							</div>
+						</div>
 					</div>
 				</div>
 			</div>

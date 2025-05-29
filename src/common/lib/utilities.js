@@ -13,7 +13,9 @@ export function isWin() {
 // https://stackoverflow.com/a/9851769
 export let isFirefox = typeof InstallTrigger !== 'undefined';
 export let isSafari = /constructor/i.test(window.HTMLElement)
-	|| (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || (typeof safari !== 'undefined' && window['safari'].pushNotification))
+	|| (function (p) {
+		return p.toString() === "[object SafariRemoteNotification]";
+	})(!window.safari || (typeof safari !== 'undefined' && window.safari.pushNotification))
 	|| !!navigator && navigator.userAgent.includes('Safari/') && !navigator.userAgent.includes('Chrome/');
 
 export function isTextBox(node) {
@@ -150,7 +152,7 @@ export function throttle(func, wait, options) {
 	if (!options) options = {};
 
 	// Helper function to get the wait time dynamically
-	var getWaitTime = function() {
+	var getWaitTime = function () {
 		return typeof wait === 'function' ? wait() : wait;
 	};
 
@@ -393,7 +395,7 @@ export function getModeBasedOnColors(bgColor, fgColor) {
 
 	// Helper to calculate luminance directly from RGB values
 	function calculateLuminance([r, g, b]) {
-		return [r, g, b].map(value => {
+		return [r, g, b].map((value) => {
 			const normalized = value / 255;
 			return normalized <= 0.03928
 				? normalized / 12.92

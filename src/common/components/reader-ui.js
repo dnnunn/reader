@@ -44,7 +44,8 @@ function View(props) {
 			const color = (props.tools && props.tools.highlight && props.tools.highlight.color) || '#ffff00';
 			console.log('Calling _handleConvertSearchResults with color:', color);
 			await props.pdfView._handleConvertSearchResults({ type: 'highlight', color });
-		} else {
+		}
+		else {
 			console.log('No valid pdfView or _handleConvertSearchResults function');
 			// fallback: do nothing or show error
 			// Optionally, you could show a notification here
@@ -79,7 +80,7 @@ function View(props) {
 					readOnly={state.readOnly}
 					params={state[name + 'ViewAnnotationPopup']}
 					annotation={state.annotations.find(x => x.id === state[name + 'ViewAnnotationPopup'].annotation.id)}
-					onChange={(annotation) => props.onUpdateAnnotations([annotation])}
+					onChange={annotation => props.onUpdateAnnotations([annotation])}
 					onDragStart={() => {}}
 					onOpenTagsPopup={props.onOpenTagsPopup}
 					onOpenPageLabelPopup={props.onOpenPageLabelPopup}
@@ -148,8 +149,8 @@ const ReaderUI = React.forwardRef((props, ref) => {
 
 	useImperativeHandle(ref, () => ({
 		setState,
-		sidebarScrollAnnotationIntoView: (id) => annotationsViewRef.current?.scrollAnnotationIntoView(id),
-		sidebarEditAnnotationText: (id) => annotationsViewRef.current?.editAnnotationText(id),
+		sidebarScrollAnnotationIntoView: id => annotationsViewRef.current?.scrollAnnotationIntoView(id),
+		sidebarEditAnnotationText: id => annotationsViewRef.current?.editAnnotationText(id),
 	}));
 
 	let findState = state.primary ? state.primaryViewFindState : state.secondaryViewFindState;

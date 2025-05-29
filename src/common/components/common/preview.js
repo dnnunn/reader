@@ -104,7 +104,8 @@ export function PopupPreview(props) {
 						id={annotation.id}
 						text={annotation.comment}
 						ariaLabel={intl.formatMessage({ id: 'pdfReader.annotationComment' })}
-						placeholder={props.readOnly ? intl.formatMessage({ id: 'pdfReader.readOnly' })
+						placeholder={props.readOnly
+							? intl.formatMessage({ id: 'pdfReader.readOnly' })
 							: intl.formatMessage({ id: 'pdfReader.addComment' })}
 						readOnly={props.readOnly}
 						enableRichText={annotation.type !== 'text'}
@@ -120,17 +121,18 @@ export function PopupPreview(props) {
 					onClick={handleTagsClick}
 					aria-description={intl.formatMessage({ id: 'pdfReader.manageTags' })}
 					aria-haspopup={true}
-				>{annotation.tags.length ? annotation.tags.map((tag, index) => (
-					<span
-						className="tag" key={index}
-						style={{ color: tag.color }}
-					>{tag.name}</span>
-				)) : <FormattedMessage id="pdfReader.addTags"/>}</button>
+				>{annotation.tags.length
+						? annotation.tags.map((tag, index) => (
+							<span
+								className="tag" key={index}
+								style={{ color: tag.color }}
+							>{tag.name}</span>
+						))
+						: <FormattedMessage id="pdfReader.addTags"/>}</button>
 			)}
 
 		</div>
 	);
-
 }
 
 export function SidebarPreview(props) {
@@ -273,12 +275,14 @@ export function SidebarPreview(props) {
 			/>
 		</div>;
 
-	let tags = annotation.tags.length ? annotation.tags.map((tag, index) => (
-		<span
-			className="tag" key={index}
-			style={{ color: tag.color }}
-		>{tag.name}</span>
-	)) : <FormattedMessage id="pdfReader.addTags"/>;
+	let tags = annotation.tags.length
+		? annotation.tags.map((tag, index) => (
+			<span
+				className="tag" key={index}
+				style={{ color: tag.color }}
+			>{tag.name}</span>
+		))
+		: <FormattedMessage id="pdfReader.addTags"/>;
 
 	let expandedState = {};
 	expandedState['expanded' + props.state] = true;

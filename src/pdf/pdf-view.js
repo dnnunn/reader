@@ -136,7 +136,7 @@ class PDFView {
 		this._preferedColorTheme = darkModeMediaQuery.matches ? 'dark' : 'light';
 
 		// Listen for changes
-		darkModeMediaQuery.addEventListener('change', event => {
+		darkModeMediaQuery.addEventListener('change', (event) => {
 			this._preferedColorTheme = event.matches ? 'dark' : 'light';
 			this._updateColorScheme();
 		});
@@ -1567,10 +1567,8 @@ class PDFView {
 					selectableAnnotations.push(annotation);
 				}
 			}
-			else {
-				if (intersectAnnotationWithPoint(annotation.position, position)) {
-					selectableAnnotations.push(annotation);
-				}
+			else if (intersectAnnotationWithPoint(annotation.position, position)) {
+				selectableAnnotations.push(annotation);
 			}
 		}
 
@@ -1733,19 +1731,17 @@ class PDFView {
 				if (action.annotation.position.rotation) {
 					cursor = 'move';
 				}
-				else {
-					if (['l', 'r'].includes(action.dir)) {
-						cursor = 'ew-resize';
-					}
-					else if (['t', 'b'].includes(action.dir)) {
-						cursor = 'ns-resize';
-					}
-					else if (['tl', 'br'].includes(action.dir)) {
-						cursor = 'nwse-resize';
-					}
-					else if (['bl', 'tr'].includes(action.dir)) {
-						cursor = 'nesw-resize';
-					}
+				else if (['l', 'r'].includes(action.dir)) {
+					cursor = 'ew-resize';
+				}
+				else if (['t', 'b'].includes(action.dir)) {
+					cursor = 'ns-resize';
+				}
+				else if (['tl', 'br'].includes(action.dir)) {
+					cursor = 'nwse-resize';
+				}
+				else if (['bl', 'tr'].includes(action.dir)) {
+					cursor = 'nesw-resize';
 				}
 			}
 			else if (action.type === 'move') {
@@ -1766,7 +1762,9 @@ class PDFView {
 				let adjustedStrokeWidth = 1 * window.devicePixelRatio;
 				// For some reason just using media query in the SVG style doesn't work on Zotero, but works on fx102
 				let color = window.matchMedia('(prefers-color-scheme: dark)').matches
-					&& this._useDarkMode ? 'white' : 'black';
+					&& this._useDarkMode
+					? 'white'
+					: 'black';
 				let svgDataUrl = [
 					'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"',
 					`     width="${size}"`,
@@ -2408,7 +2406,7 @@ class PDFView {
 			this._onSetSelectionPopup();
 		}
 		this._render();
-	}, () => ['ink', 'eraser'].includes(this._tool.type) ? 0 : 50);
+	}, () => (['ink', 'eraser'].includes(this._tool.type) ? 0 : 50));
 
 	_getAnnotationFromSelectionRanges(selectionRanges, type, color) {
 		if (selectionRanges[0].collapsed) {
@@ -2531,8 +2529,8 @@ class PDFView {
 					}
 					else if (action.type === 'erase' && action.triggered) {
 						let annotations = [...action.annotations.values()];
-						let updated = annotations.filter( x => x.position.paths.length);
-						let deleted = annotations.filter( x => !x.position.paths.length);
+						let updated = annotations.filter(x => x.position.paths.length);
+						let deleted = annotations.filter(x => !x.position.paths.length);
 						if (updated.length) {
 							this._onUpdateAnnotations(updated);
 						}
@@ -3052,7 +3050,7 @@ class PDFView {
 		) {
 			let annotation = this._getAnnotationFromSelectionRanges(this._selectionRanges, 'highlight');
 			annotation.sortIndex = getSortIndex(this._pdfPages, annotation.position);
-			annotation.color = this._tools['highlight'].color;
+			annotation.color = this._tools.highlight.color;
 			this._onAddAnnotation(annotation, true);
 			this.navigateToPosition(annotation.position);
 			this._setSelectionRanges();
@@ -3065,13 +3063,12 @@ class PDFView {
 		) {
 			let annotation = this._getAnnotationFromSelectionRanges(this._selectionRanges, 'underline');
 			annotation.sortIndex = getSortIndex(this._pdfPages, annotation.position);
-			annotation.color = this._tools['underline'].color;
+			annotation.color = this._tools.underline.color;
 			this._onAddAnnotation(annotation, true);
 			this.navigateToPosition(annotation.position);
 			this._setSelectionRanges();
 		}
 		else if (code === 'Ctrl-Alt-Digit3' && !this._readOnly) {
-
 			// 1. Add to this annotation to last selected object, to have it after escape
 			// 2. Errors when writing
 
@@ -3093,7 +3090,7 @@ class PDFView {
 				type: 'note',
 				pageLabel: this._getPageLabel(pageIndex, true),
 				sortIndex: getSortIndex(this._pdfPages, position),
-				color: this._tools['note'].color,
+				color: this._tools.note.color,
 				position
 			});
 			if (annotation) {
@@ -3115,7 +3112,7 @@ class PDFView {
 			let viewBox = page.viewport.viewBox;
 			let cx = (viewBox[0] + viewBox[2]) / 2;
 			let cy = (viewBox[1] + viewBox[3]) / 2;
-			let fontSize = this._tools['text'].size;
+			let fontSize = this._tools.text.size;
 			let position = {
 				pageIndex,
 				fontSize,
@@ -3131,7 +3128,7 @@ class PDFView {
 				type: 'text',
 				pageLabel: this._getPageLabel(pageIndex, true),
 				sortIndex: getSortIndex(this._pdfPages, position),
-				color: this._tools['text'].color,
+				color: this._tools.text.color,
 				position
 			});
 			if (annotation) {
@@ -3162,7 +3159,7 @@ class PDFView {
 				type: 'image',
 				pageLabel: this._getPageLabel(pageIndex, true),
 				sortIndex: getSortIndex(this._pdfPages, position),
-				color: this._tools['image'].color,
+				color: this._tools.image.color,
 				position
 			}, true);
 			if (annotation) {
@@ -3394,19 +3391,17 @@ class PDFView {
 			this._onSetDataTransferAnnotations(event.clipboardData, annotation);
 		}
 		// Copying text
+		else if (this._selectionRanges.length <= 2) {
+			let annotation = this._getAnnotationFromSelectionRanges(this._selectionRanges, 'highlight');
+			if (!annotation) {
+				return;
+			}
+			this._onSetDataTransferAnnotations(event.clipboardData, annotation, true);
+		}
 		else {
-			if (this._selectionRanges.length <= 2) {
-				let annotation = this._getAnnotationFromSelectionRanges(this._selectionRanges, 'highlight');
-				if (!annotation) {
-					return;
-				}
-				this._onSetDataTransferAnnotations(event.clipboardData, annotation, true);
-			}
-			else {
-				// Only copy text when selection spans over more than 2 pages
-				let fullText = getTextFromSelectionRanges(this._selectionRanges);
-				event.clipboardData.setData('text/plain', fullText);
-			}
+			// Only copy text when selection spans over more than 2 pages
+			let fullText = getTextFromSelectionRanges(this._selectionRanges);
+			event.clipboardData.setData('text/plain', fullText);
 		}
 	}
 
@@ -3533,7 +3528,8 @@ class PDFView {
 			if (!destArray) {
 				throw new Error(`Unable to resolve named destination: "${dest}"`);
 			}
-		} else {
+		}
+		else {
 			destArray = dest;
 		}
 

@@ -233,7 +233,7 @@ function LabelPopup({ params, onUpdateAnnotations, onClose }) {
 						maxLength={32}
 						onChange={handleChange}
 						onKeyDown={handleInputKeydown}
-						aria-label={intl.formatMessage({ id: "pdfReader.editPageNumber"})}
+						aria-label={intl.formatMessage({ id: "pdfReader.editPageNumber" })}
 					/>
 				</div>
 				<div className="column second">

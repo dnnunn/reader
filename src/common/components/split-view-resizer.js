@@ -56,11 +56,6 @@ function SplitViewResizer(props) {
 		}
 
 
-
-
-
-
-
 		//
 		//
 		// let width = window.innerWidth - event.clientX;

@@ -22,7 +22,8 @@ function ViewPopup({ id, rect, className, uniqueRef, padding, children, onRender
 			pos.current.top += dy;
 
 			setPopupPosition({}); // Trigger re-render
-		} else {
+		}
+		else {
 			xrect.current = rect;
 		}
 	}, [rect]);
@@ -62,25 +63,31 @@ function ViewPopup({ id, rect, className, uniqueRef, padding, children, onRender
 			top = rect[1] + ((rect[3] - rect[1]) - height) / 2;
 			if (top < 0) {
 				top = rect[1];
-			} else if (top + height > viewRect[3]) {
+			}
+			else if (top + height > viewRect[3]) {
 				top = (rect[1] + (rect[3] - rect[1])) - height;
 			}
-		} else if (left + width > viewRect[2]) {
+		}
+		else if (left + width > viewRect[2]) {
 			side = 'left';
 			left = rect[0] - width - padding;
 			top = rect[1] + ((rect[3] - rect[1]) - height) / 2;
 			if (top < 0) {
 				top = rect[1];
-			} else if (top + height > viewRect[3]) {
+			}
+			else if (top + height > viewRect[3]) {
 				top = (rect[1] + (rect[3] - rect[1])) - height;
 			}
-		} else if (rect[3] + height + padding < viewRect[3]) {
+		}
+		else if (rect[3] + height + padding < viewRect[3]) {
 			top = rect[3] + padding;
 			side = 'bottom';
-		} else if (rect[1] - padding - height > 0) {
+		}
+		else if (rect[1] - padding - height > 0) {
 			top = rect[1] - padding - height;
 			side = 'top';
-		} else {
+		}
+		else {
 			top = rect[3] + padding;
 			side = 'top';
 
@@ -90,16 +97,19 @@ function ViewPopup({ id, rect, className, uniqueRef, padding, children, onRender
 				top = rect[1] + ((rect[3] - rect[1]) - height) / 2;
 				if (top < 0) {
 					top = rect[1];
-				} else if (top + height > viewRect[3]) {
+				}
+				else if (top + height > viewRect[3]) {
 					top = (rect[1] + (rect[3] - rect[1])) - height;
 				}
-			} else {
+			}
+			else {
 				side = 'left';
 				left = rect[0] - width - padding;
 				top = rect[1] + ((rect[3] - rect[1]) - height) / 2;
 				if (top < 0) {
 					top = rect[1];
-				} else if (top + height > viewRect[3]) {
+				}
+				else if (top + height > viewRect[3]) {
 					top = (rect[1] + (rect[3] - rect[1])) - height;
 				}
 			}

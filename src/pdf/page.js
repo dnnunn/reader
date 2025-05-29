@@ -185,7 +185,6 @@ export default class Page {
 		else {
 			this.actualContext.globalAlpha = 0.5;
 			this.actualContext.globalCompositeOperation = 'lighten';
-
 		}
 		this.actualContext.fillStyle = color;
 
@@ -221,7 +220,6 @@ export default class Page {
 		else {
 			this.actualContext.globalAlpha = 0.4;
 			this.actualContext.globalCompositeOperation = 'lighten';
-
 		}
 		this.actualContext.fillStyle = color;
 
@@ -276,7 +274,6 @@ export default class Page {
 	}
 
 	drawCommentIndicators(annotations) {
-
 		function quickIntersectRect(r1, r2) {
 			return !(r2[0] > r1[2]
 				|| r2[2] < r1[0]
@@ -678,7 +675,6 @@ export default class Page {
 		this.drawCommentIndicators(annotations);
 
 
-
 		this.drawOverlays();
 
 		this.drawHover();
@@ -688,9 +684,9 @@ export default class Page {
 
 		if (!selectedAnnotationIDs.length
 			&& focusedObject && (
-				focusedObject.pageIndex === this.pageIndex
+			focusedObject.pageIndex === this.pageIndex
 				|| focusedObject.object.position.nextPageRects && focusedObject.pageIndex === this.pageIndex
-			)
+		)
 		) {
 			let position = focusedObject.object.position;
 			this.actualContext.strokeStyle = window.computedColorFocusBorder;
@@ -725,15 +721,10 @@ export default class Page {
 		}
 
 
-
-
-
-
 		if (action?.type !== 'updateAnnotationRange' || !action?.triggered) {
 			this.actualContext.save();
 			let selectedAnnotations = annotations.filter(x => selectedAnnotationIDs.includes(x.id));
 			for (let annotation of selectedAnnotations) {
-
 				this.actualContext.strokeStyle = '#6d95e0';
 				this.actualContext.beginPath();
 				this.actualContext.setLineDash([5 * devicePixelRatio, 3 * devicePixelRatio]);

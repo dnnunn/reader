@@ -23,8 +23,8 @@ class PrintTask {
 		this.pagesOverview = pagesOverview;
 		this.printContainer = printContainer;
 		this._printResolution = printResolution || 150;
-		this._optionalContentConfigPromise =
-			optionalContentConfigPromise || pdfDocument.getOptionalContentConfig();
+		this._optionalContentConfigPromise
+			= optionalContentConfigPromise || pdfDocument.getOptionalContentConfig();
 		this._printAnnotationStoragePromise = Promise.resolve();
 		this.currentPage = -1;
 		this.onProgress = onProgress;
@@ -169,7 +169,7 @@ class PrintTask {
 
 	performPrint() {
 		this.throwIfInactive();
-		return new Promise(resolve => {
+		return new Promise((resolve) => {
 			// Push window.print in the macrotask queue to avoid being affected by
 			// the deprecation of running print() code in a microtask, see
 			// https://github.com/mozilla/pdf.js/issues/7547.
@@ -310,16 +310,17 @@ function initPDFPrintService({ onProgress, onFinish, pdfView }) {
 				return printTask.performPrint();
 			}).catch(function () {
 				// Ignore any error messages.
-			}).then(function () {
-				// aborts acts on the "active" print request, so we need to check
-				// whether the print request (activeServiceOnEntry) is still active.
-				// Without the check, an unrelated print request (created after aborting
-				// this print request while the pages were being generated) would be
-				// aborted.
-				if (printTask === printService._activeTask) {
-					printService.abort();
-				}
-			});
+			})
+.then(function () {
+	// aborts acts on the "active" print request, so we need to check
+	// whether the print request (activeServiceOnEntry) is still active.
+	// Without the check, an unrelated print request (created after aborting
+	// this print request while the pages were being generated) would be
+	// aborted.
+	if (printTask === printService._activeTask) {
+		printService.abort();
+	}
+});
 		}
 	};
 

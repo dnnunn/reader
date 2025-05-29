@@ -419,7 +419,8 @@ export function setCaretPosition(event) {
 			range.collapse(true);
 			selection.addRange(range);
 		}
-	} else if (targetDocument.caretRangeFromPoint) { // Check if the browser supports document.caretRangeFromPoint
+	}
+	else if (targetDocument.caretRangeFromPoint) { // Check if the browser supports document.caretRangeFromPoint
 		// Get the caret range from the point
 		const caretRange = targetDocument.caretRangeFromPoint(x, y);
 
@@ -432,7 +433,8 @@ export function setCaretPosition(event) {
 			// Set the caret range
 			selection.addRange(caretRange);
 		}
-	} else {
+	}
+	else {
 		// Neither method is supported, add a fallback or display an error message
 		console.error('Your browser does not support caret position from point.');
 	}
@@ -469,9 +471,12 @@ export function getTransformFromRects(rect1, rect2) {
 
 	// Create the transformation matrix for PDF
 	const matrix = [
-		scaleX, 0,
-		0, scaleY,
-		translateX, translateY
+		scaleX,
+		0,
+		0,
+		scaleY,
+		translateX,
+		translateY
 	];
 
 	return matrix;
@@ -498,7 +503,7 @@ export function hexToRgb(hex) {
 }
 
 export function rgbToHex(r, g, b) {
-	return "#" + [r, g, b].map(x => {
+	return "#" + [r, g, b].map((x) => {
 		let hex = x.toString(16);
 		return hex.length === 1 ? "0" + hex : hex;
 	}).join('');

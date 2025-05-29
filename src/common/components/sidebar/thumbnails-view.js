@@ -31,7 +31,6 @@ const Thumbnail = memo(({ thumbnail, selected, pageLabel, onContextMenu }) => {
 Thumbnail.displayName = 'Thumbnail';
 
 
-
 function ThumbnailsView(props) {
 	const intl = useIntl();
 	const [selected, setSelected] = useState([0]);
@@ -51,7 +50,7 @@ function ThumbnailsView(props) {
 		}
 	}, [props.currentPageIndex]);
 
-	useEffect (() => {
+	useEffect(() => {
 		let options = {
 			root: document.querySelector('.sidebar-content'),
 			rootMargin: "200px",
@@ -226,7 +225,7 @@ function ThumbnailsView(props) {
 				tabIndex={-1}
 				role="listbox"
 				aria-label={intl.formatMessage({ id: "pdfReader.thumbnails" })}
-				aria-activedescendant={`thumbnail_${selected[selected.length-1]}`}
+				aria-activedescendant={`thumbnail_${selected[selected.length - 1]}`}
 				aria-multiselectable="true"
 			>
 				{props.thumbnails.map((thumbnail, index) => {

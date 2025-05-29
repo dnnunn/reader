@@ -51,7 +51,7 @@ export function smoothPath(points) {
 export function applyTransformationMatrixToInkPosition(matrix, position) {
 	const { paths, width } = position;
 	const a = matrix[0], b = matrix[1], c = matrix[2], d = matrix[3], e = matrix[4], f = matrix[5];
-	const transformedPaths = paths.map(path => {
+	const transformedPaths = paths.map((path) => {
 		const transformedPath = [];
 		for (let i = 0; i < path.length; i += 2) {
 			const x = path[i];
@@ -82,18 +82,17 @@ function removeIntersectingPoints(circleCenterX, circleCenterY, circleWidth, pos
 	const newPathList = [];
 	let currentPath = [];
 
-	position.paths.forEach(path => {
+	position.paths.forEach((path) => {
 		for (let i = 0; i < path.length; i += 2) {
 			const x = path[i];
 			const y = path[i + 1];
 
 			if (!isPointInsideCircle(x, y, circleCenterX, circleCenterY, circleWidth / 2)) {
 				currentPath.push(x, y);
-			} else {
-				if (currentPath.length > 0) {
-					newPathList.push(currentPath);
-					currentPath = [];
-				}
+			}
+			else if (currentPath.length > 0) {
+				newPathList.push(currentPath);
+				currentPath = [];
 			}
 		}
 
@@ -110,7 +109,7 @@ function removeIntersectingPoints(circleCenterX, circleCenterY, circleWidth, pos
 export function eraseInk(circleCenterX, circleCenterY, circleWidth, annotations) {
 	const modifiedAnnotations = [];
 
-	annotations.forEach(annotation => {
+	annotations.forEach((annotation) => {
 		const originalTotalPoints = annotation.position.paths.reduce((total, path) => total + path.length, 0);
 		let { position } = annotation;
 		position = removeIntersectingPoints(circleCenterX, circleCenterY, circleWidth, position);

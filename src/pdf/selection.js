@@ -103,8 +103,8 @@ function getRangeBySelection({ chars, anchor, head, reverse }) {
 		let { rotation, rect, c } = chars[anchorOffset];
 		let rtl = isRTL(c);
 		if (rtl && (
-				!rotation && x1 < rect[0] + (rect[2] - rect[0]) / 2
-			)
+			!rotation && x1 < rect[0] + (rect[2] - rect[0]) / 2
+		)
 			|| !rtl && (
 				!rotation && x1 > rect[0] + (rect[2] - rect[0]) / 2
 				|| rotation === 90 && y1 > rect[1] + (rect[3] - rect[1]) / 2
@@ -119,8 +119,8 @@ function getRangeBySelection({ chars, anchor, head, reverse }) {
 		let { rotation, rect, c } = chars[headOffset];
 		let rtl = isRTL(c);
 		if (rtl && (
-				!rotation && x2 < rect[0] + (rect[2] - rect[0]) / 2
-			)
+			!rotation && x2 < rect[0] + (rect[2] - rect[0]) / 2
+		)
 			|| !rtl && (
 				!rotation && x2 > rect[0] + (rect[2] - rect[0]) / 2
 				|| rotation === 90 && y2 > rect[1] + (rect[3] - rect[1]) / 2
@@ -414,7 +414,8 @@ export function getSortIndex(pdfPages, position) {
 	return [
 		pageIndex.toString().slice(0, 5).padStart(5, '0'),
 		offset.toString().slice(0, 6).padStart(6, '0'),
-		Math.floor(top).toString().slice(0, 5).padStart(5, '0')
+		Math.floor(top).toString().slice(0, 5)
+.padStart(5, '0')
 	].join('|');
 }
 
@@ -566,7 +567,7 @@ export function getCharsFromSelectionRanges(pdfPages, selectionRanges) {
 	const charsArray = [];
 
 	// Iterate over each selectionRange to directly access characters
-	selectionRanges.forEach(selection => {
+	selectionRanges.forEach((selection) => {
 		const pageIndex = selection.position.pageIndex;
 		const page = pdfPages[pageIndex];
 
@@ -623,7 +624,6 @@ function applySelectionRangeIsolation(pdfPages, selectionRanges) {
 	}
 	else {
 		chars = chars.filter(x => !x.isolated);
-
 	}
 
 	if (chars.length === 0) return [];
@@ -650,7 +650,8 @@ function applySelectionRangeIsolation(pdfPages, selectionRanges) {
 				anchorOffset: char.offset,
 				headOffset: char.offset + 1
 			};
-		} else {
+		}
+		else {
 			// Extend the current range
 			currentRange.headOffset = char.offset + 1;
 		}
@@ -671,15 +672,13 @@ function applySelectionRangeIsolation(pdfPages, selectionRanges) {
 		selectionRanges[0].anchor = true;
 		selectionRanges[0].head = true;
 	}
+	else if (start) {
+		selectionRanges[0].anchor = true;
+		selectionRanges.at(-1).head = true;
+	}
 	else {
-		if (start) {
-			selectionRanges[0].anchor = true;
-			selectionRanges.at(-1).head = true;
-		}
-		else {
-			selectionRanges.at(-1).anchor = true;
-			selectionRanges[0].head = true;
-		}
+		selectionRanges.at(-1).anchor = true;
+		selectionRanges[0].head = true;
 	}
 
 	for (let selectionRange of selectionRanges) {
@@ -788,7 +787,6 @@ export function getSelectionRangesByPosition(pdfPages, position) {
 	}
 
 
-
 	// if (!selectionRange.collapsed) {
 	// 	// We can synchronously get page viewbox from page view, because it's already loaded when selecting
 	// 	let pageHeight = PDFViewerApplication.pdfViewer.getPageView(selectionRange.position.pageIndex).viewport.viewBox[3];
@@ -838,7 +836,7 @@ export function getTextFromSelectionRanges(selectionRanges) {
 
 function getMostCommonValue(arr) {
 	let counts = arr.reduce((a, b) => ({ ...a, [b]: (a[b] || 0) + 1 }), {});
-	return +Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
+	return +Object.keys(counts).reduce((a, b) => (counts[a] > counts[b] ? a : b));
 }
 
 export function getRectRotationOnText(chars, rect) {

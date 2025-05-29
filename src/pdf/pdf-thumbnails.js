@@ -30,8 +30,6 @@ const THUMBNAIL_CANVAS_BORDER_WIDTH = 1; // px
 const THUMBNAIL_WIDTH = 120; // px
 
 
-
-
 const RenderingStates = {
 	INITIAL: 0, RUNNING: 1, PAUSED: 2, FINISHED: 3,
 };
@@ -170,7 +168,6 @@ class PDFThumbnails {
 		// const transform = outputScale.scaled ? [outputScale.sx, 0, 0, outputScale.sy, 0, 0] : null;
 
 
-
 		// Render the thumbnail at a larger size and downsize the canvas (similar
 		// to `setImage`), to improve consistency between thumbnails created by
 		// the `draw` and `setImage` methods (fixes issue 8233).
@@ -192,7 +189,7 @@ class PDFThumbnails {
 		try {
 			await renderTask.promise;
 		}
-		catch(e) {
+		catch (e) {
 			console.log(e);
 		}
 		finally {

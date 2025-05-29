@@ -235,8 +235,8 @@ function Toolbar(props) {
 				>
 					{
 						props.tool.type === 'eraser'
-						? <IconEraser/>
-						: <IconColor20 color={props.tool.color || ['pointer', 'hand'].includes(props.tool.type) && 'transparent'}/>
+							? <IconEraser/>
+							: <IconColor20 color={props.tool.color || ['pointer', 'hand'].includes(props.tool.type) && 'transparent'}/>
 					}
 					<IconChevronDown8/>
 				</button>

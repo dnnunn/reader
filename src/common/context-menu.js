@@ -59,7 +59,7 @@ export function createColorContextMenu(reader, params) {
 					label: reader._getString('pdfReader.eraser'),
 					disabled: reader._state.readOnly,
 					checked: reader._state.tool.type === 'eraser',
-					onCommand: () => reader._state.tool.type === 'ink' ? reader.setTool({ type: 'eraser' }) : reader.setTool({ type: 'ink' })
+					onCommand: () => (reader._state.tool.type === 'ink' ? reader.setTool({ type: 'eraser' }) : reader.setTool({ type: 'ink' }))
 				}
 			],
 			[
@@ -67,19 +67,19 @@ export function createColorContextMenu(reader, params) {
 					slider: true,
 					size: reader._state.tool.size,
 					steps: TEXT_ANNOTATION_FONT_SIZE_STEPS,
-					onCommand: (size) => reader.setTool({ size })
+					onCommand: size => reader.setTool({ size })
 				},
 				reader._state.tool.type === 'ink' && {
 					slider: true,
 					size: reader._state.tool.size,
 					steps: INK_ANNOTATION_WIDTH_STEPS,
-					onCommand: (size) => reader.setTool({ size })
+					onCommand: size => reader.setTool({ size })
 				},
 				reader._state.tool.type === 'eraser' && {
 					slider: true,
 					size: reader._state.tool.size,
 					steps: INK_ANNOTATION_WIDTH_STEPS,
-					onCommand: (size) => reader.setTool({ size })
+					onCommand: size => reader.setTool({ size })
 				}
 			],
 			...appendCustomItemGroups('createColorContextMenu', reader, params)
