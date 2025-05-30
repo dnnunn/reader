@@ -310,12 +310,12 @@ function normalize(text) {
 	}
 	else {
 		// Compile the regular expression for text normalization once.
-		const replace = Object.keys(CHARACTERS_TO_NORMALIZE).join("");
+		const replace = Object.keys(CHARACTERS_TO_NORMALIZE).sort().join("");
 
 		// 3040-309F: Hiragana
 		// 30A0-30FF: Katakana
 		const CJK = "(?:\\p{Ideographic}|[\u3040-\u30FF])";
-		const HKDiacritics = "(?:\u3099|\u309A)";
+		const HKDiacritics = "[\u3099\u309A]";
 		const regexp = `([${replace}])|([${HKDiacritics}\\n)|(\\p{M}+(?:-\\n)?)|(\\S-\\n)|(${CJK}\\n)|(\\n)`;
 
 		if (syllablePositions.length === 0) {
@@ -551,7 +551,7 @@ function getSnippet(text, phraseStart, phraseEnd, numWordsAround) {
 	let rightText = text.substring(phraseEnd).trim();
 
 	let leftWords = leftText ? leftText.split(/\s+/) : [];
-	let rightWords = rightText ? rightWords.split(/\s+/) : [];
+	let rightWords = rightText ? rightText.split(/\s+/) : [];
 
 	let leftSnippetWords = leftWords.slice(-numWordsAround);
 	let rightSnippetWords = rightWords.slice(0, numWordsAround);
