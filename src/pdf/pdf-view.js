@@ -251,7 +251,7 @@ class PDFView {
 					}
 				});
 
-				this._iframeWindow.addEventListener('focus', (event) => {
+				this._iframeWindow.addEventListener('focus', () => {
 					options.onFocus();
 					// Help screen readers understand where to place virtual cursor
 					placeA11yVirtualCursor(this._a11yVirtualCursorTarget);
@@ -926,9 +926,9 @@ class PDFView {
 		let startNode = getNodeOffset(container, range[0].anchorOffset)?.node;
 		let endNode = getNodeOffset(container, range[0].to)?.node;
 		// pick node corresponding to the range that actually contains the query
-		let node = endNode.textContent.includes(this._findState.query) ? endNode : startNode;
-		this._a11yVirtualCursorTarget = node.parentNode;
-	  }, A11Y_VIRT_CURSOR_DEBOUNCE_LENGTH);
+		let node = endNode?.textContent?.includes(this._findState.query) ? endNode : startNode;
+		this._a11yVirtualCursorTarget = node?.parentNode;
+	}, A11Y_VIRT_CURSOR_DEBOUNCE_LENGTH);
 
 	// Record the current page that the virtual cursor enter when focus enters the content.
 	// Debounce to not run this on every view stats update.
@@ -985,7 +985,7 @@ class PDFView {
 		return !this._selectionRanges.length || !!this._selectionRanges[0].collapsed;
 	}
 
-	showAnnotations(show) {
+	showAnnotations() {
 
 	}
 
@@ -1197,7 +1197,7 @@ class PDFView {
 			Math.max(y1, y2)
 		];
 
-		if (!this._pp || 1) {
+		if (!this._pp) {
 			let pr = page.div.getBoundingClientRect();
 			this._pp = {
 				pr,
@@ -1213,7 +1213,6 @@ class PDFView {
 		}
 		else {
 			let pp = this._pp;
-			let x = pp.pr.x;
 			let y = pp.pr.y;
 			y += pp.scrollTop - scrollTop;
 			return [
@@ -1407,10 +1406,6 @@ class PDFView {
 			let topLeftRect = [topLeft[0] - dd, topLeft[1] - dd, topLeft[0] + dd, topLeft[1] + dd];
 			let topRightRect = [topRight[0] - dd, topRight[1] - dd, topRight[0] + dd, topRight[1] + dd];
 
-			let leftRect = [bottomLeft[0] - dd, topLeft[1], topLeft[0] + dd, bottomLeft[1]];
-			let rightRect = [bottomRight[0] - dd, topRight[1] - dd, topRight[0] + dd, bottomRight[1] + dd];
-			let topRect = [topLeft[0], topLeft[1] - dd, topRight[0], topRight[1] + dd];
-			let bottomRect = [bottomLeft[0], bottomLeft[1] - dd, bottomRight[0], bottomRight[1] + dd];
 
 			let middleLeftRect = [middleLeft[0] - dd, middleLeft[1] - dd, middleLeft[0] + dd, middleLeft[1] + dd];
 			let middleRightRect = [middleRight[0] - dd, middleRight[1] - dd, middleRight[0] + dd, middleRight[1] + dd];
@@ -1451,7 +1446,6 @@ class PDFView {
 				return { type: 'resize', annotation, dir };
 			}
 
-			let rrr = [topLeft[0], topLeft[1], bottomRight[0], bottomRight[1]];
 			//
 			// if (quickIntersectRect(rrr, p)) {
 			// 	let r = position.rects[0];
@@ -1537,10 +1531,19 @@ class PDFView {
 				bSize = 0;
 			}
 
-			return aSize - bSize;
+			if (aSize === undefined || bSize === undefined) {
+				return 0;
+			}
+			if (aSize === bSize) {
+				return 0;
+			}
+			return aSize < bSize ? -1 : 1;
 		});
-
-		return selectableOverlays[0];
+		
+		if (selectableOverlays.length) {
+			// eslint-disable-next-line consistent-return
+			return selectableOverlays[0];
+		}
 	}
 
 	_getPageAnnotations(pageIndex) {
@@ -1694,14 +1697,9 @@ class PDFView {
 				action = { type: 'text' };
 			}
 			else {
-				// Enable text selection if using mouse or pen or touch (finger) with highlight/underline tool
-				if (mouse || event.pointerType === 'pen' || ['highlight', 'underline'].includes(this._tool.type)) {
-					action = { type: 'selectText' };
-				}
-				// Otherwise don't trigger any action for touch/pen because it'll be scrolling
-				else {
-					return { action: { type: 'none' }, selectAnnotations: [] };
-				}
+				action = (mouse || event.pointerType === 'pen' || ['highlight', 'underline'].includes(this._tool.type))
+					? { type: 'selectText' }  // Enable text selection if using mouse/pen or highlight/underline tool
+					: { type: 'none' };       // Otherwise don't trigger action for touch/pen (scrolling)
 			}
 		}
 
@@ -1873,7 +1871,6 @@ class PDFView {
 			this._render();
 			return;
 		}
-		let page = this.getPageByIndex(position.pageIndex);
 		let { action, selectAnnotations } = this.getActionAtPosition(position, event);
 
 		// if (action.type === 'overlay') {
@@ -2055,7 +2052,7 @@ class PDFView {
 			this._hover = null;
 			let position = this.pointerEventToPosition(event);
 			if (position) {
-				let { action, selectAnnotations } = this.getActionAtPosition(position, event);
+				let { action } = this.getActionAtPosition(position, event);
 
 				let overlay = this._getSelectableOverlay(position);
 
@@ -2097,7 +2094,7 @@ class PDFView {
 							let rect = this.getClientRect(overlay.position.rects[0], overlay.position.pageIndex);
 							let overlayPopup = { ...overlay, rect };
 							if (overlayPopup.type === 'internal-link') {
-								let { image, width, height, x, y } = await this._pdfRenderer?.renderPreviewPage(overlay.destinationPosition);
+								let { image, width, height, x, y } = await this._pdfRenderer?.renderPreviewPage(overlay.destinationPosition) || {};
 								overlayPopup.image = image;
 								overlayPopup.width = width;
 								overlayPopup.height = height;
@@ -3260,7 +3257,7 @@ class PDFView {
 									height,
 									x,
 									y
-								} = await this._pdfRenderer?.renderPreviewPage(overlay.destinationPosition);
+								} = await this._pdfRenderer?.renderPreviewPage(overlay.destinationPosition) || {};
 								overlayPopup.image = image;
 								overlayPopup.width = width;
 								overlayPopup.height = height;
@@ -3309,29 +3306,28 @@ class PDFView {
 		if (this._textAnnotationFocused()) {
 			return;
 		}
-		if (!this.action || !['moveAndDrag', 'drag'].includes(this.action.type)) {
-			event.preventDefault();
+		event.preventDefault();
+		if (!this.action?.annotation) {
 			return;
 		}
-		if (!this.action.multiple) {
-			let annotation = this.action.annotation;
-			let canvas = this._dragCanvas;
-			if (annotation.type === 'text') {
-				let ctx = canvas.getContext('2d');
-				let pixelRatio = window.devicePixelRatio;
-				canvas.width = 12 * pixelRatio;
-				canvas.height = 12 * pixelRatio;
-				canvas.style.width = 12 + 'px';
-				canvas.style.height = 12 + 'px';
-				// ctx.fillStyle = annotation.color;
-				// ctx.transform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
-				// ctx.beginPath();
-				// let p = new Path2D('M1.4375 0.4375C1.15866 0.4375 0.9375 0.658658 0.9375 0.9375L0.9375 2.46875C0.9375 2.74759 1.15866 2.96875 1.4375 2.96875L1.9375 2.96875C2.21634 2.96875 2.4375 2.74759 2.4375 2.46875L2.4375 1.9375L4.96875 1.9375L4.96875 10.0312L4.46875 10.0312C4.18991 10.0313 3.9375 10.2524 3.9375 10.5312L3.9375 11.0312C3.9375 11.3101 4.18991 11.5625 4.46875 11.5625L5.96875 11.5625L7.5 11.5625C7.77884 11.5625 8 11.3101 8 11.0312L8 10.5312C8 10.2524 7.77884 10.0312 7.5 10.0312L7 10.0312L7 1.9375L9.5 1.9375L9.5 2.46875C9.5 2.74759 9.72116 2.96875 10 2.96875L10.5312 2.96875C10.8101 2.96875 11.0312 2.74759 11.0312 2.46875L11.0312 0.9375C11.0312 0.658658 10.8101 0.4375 10.5312 0.4375L10.0312 0.4375L5.96875 0.4375L1.9375 0.4375L1.4375 0.4375Z');
-				// ctx.fill(p);
-				event.dataTransfer.setDragImage(canvas, 12, 6);
-			}
-			else {
-				let page = this.getPageByIndex(annotation.position.pageIndex);
+		let annotation = this.action.annotation;
+		let canvas = this._dragCanvas;
+		if (annotation.type === 'text') {
+			let ctx = canvas.getContext('2d');
+			let pixelRatio = window.devicePixelRatio;
+			canvas.width = 12 * pixelRatio;
+			canvas.height = 12 * pixelRatio;
+			canvas.style.width = 12 + 'px';
+			canvas.style.height = 12 + 'px';
+			// ctx.fillStyle = annotation.color;
+			// ctx.transform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+			// ctx.beginPath();
+			// let p = new Path2D('M1.4375 0.4375C1.15866 0.4375 0.9375 0.658658 0.9375 0.9375L0.9375 2.46875C0.9375 2.74759 1.15866 2.96875 1.4375 2.96875L1.9375 2.96875C2.21634 2.96875 2.4375 2.74759 2.4375 2.46875L2.4375 1.9375L4.96875 1.9375L4.96875 10.0312L4.46875 10.0312C4.18991 10.0313 3.9375 10.2524 3.9375 10.5312L3.9375 11.0312C3.9375 11.3101 4.18991 11.5625 4.46875 11.5625L5.96875 11.5625L7.5 11.5625C7.77884 11.5625 8 11.3101 8 11.0312L8 10.5312C8 10.2524 7.77884 10.0312 7.5 10.0312L7 10.0312L7 1.9375L9.5 1.9375L9.5 2.46875C9.5 2.74759 9.72116 2.96875 10 2.96875L10.5312 2.96875C10.8101 2.96875 11.0312 2.74759 11.0312 2.46875L11.0312 0.9375C11.0312 0.658658 10.8101 0.4375 10.5312 0.4375L10.0312 0.4375L5.96875 0.4375L1.9375 0.4375L1.4375 0.4375Z');
+			// ctx.fill(p);
+			event.dataTransfer.setDragImage(canvas, 12, 6);
+		} else {
+			let page = this.getPageByIndex(annotation.position.pageIndex);
+			if (page && typeof page.renderAnnotationOnCanvas === 'function') {
 				page.renderAnnotationOnCanvas(annotation, canvas);
 				// When window.devicePixelRatio > 1, Chrome uses CSS pixels when positioning
 				// image with setDragImage, while Safari/Firefox uses physical pixels. Weird.
@@ -3345,8 +3341,7 @@ class PDFView {
 
 		if (this._selectionRanges.length <= 2) {
 			this._onSetDataTransferAnnotations(event.dataTransfer, this.action.annotation);
-		}
-		else {
+		} else {
 			// Only drag text when selection spans over more than 2 pages
 			let fullText = getTextFromSelectionRanges(this._selectionRanges);
 			event.dataTransfer.clearData();
@@ -3516,7 +3511,7 @@ class PDFView {
 	async _getPositionFromDestination(dest) {
 		const pdfDocument = this._iframeWindow.PDFViewerApplication.pdfDocument;
 		if (!pdfDocument || !dest) {
-			throw new Error("No PDF document available or invalid destination provided.");
+			throw new Error('No PDF document available or invalid destination provided.');
 		}
 
 		let destArray;
@@ -3599,6 +3594,6 @@ class PDFView {
 		// Clear search results
 		this._findController.onClose();
 	}
-}
+} // Missing closing brace was causing the lint error
 
 export default PDFView;

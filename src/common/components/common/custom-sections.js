@@ -1,4 +1,5 @@
 import React, { memo, useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 
 let CustomSections = memo(({ type, ...props }) => {
 	let sectionRef = useRef();
@@ -22,5 +23,11 @@ let CustomSections = memo(({ type, ...props }) => {
 		<div ref={sectionRef} className="custom-sections"/>
 	);
 });
+
+CustomSections.displayName = 'CustomSections';
+
+CustomSections.propTypes = {
+	type: PropTypes.string.isRequired
+};
 
 export default CustomSections;

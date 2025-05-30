@@ -1,6 +1,7 @@
 import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import cx from 'classnames';
+import PropTypes from 'prop-types';
 import { ANNOTATION_COLORS } from '../../defines';
 import ViewPopup from './common/view-popup';
 import CustomSections from '../common/custom-sections';
@@ -13,10 +14,12 @@ import IconSearch from '../../../../res/icons/16/search.svg';
 
 function SelectionPopup(props) {
 	const intl = useIntl();
-
 	function handleColorPick(color) {
-		let type = props.textSelectionAnnotationMode;
-		props.onAddAnnotation({ ...props.params.annotation, type, color });
+		const { textSelectionAnnotationMode, onAddAnnotation, params } = props;
+		if (!textSelectionAnnotationMode || !onAddAnnotation || !params?.annotation) {
+			return;
+		}
+		onAddAnnotation({ ...params.annotation, type: textSelectionAnnotationMode, color });
 	}
 
 	function handleAddToNote() {
@@ -78,5 +81,19 @@ function SelectionPopup(props) {
 		</ViewPopup>
 	);
 }
+
+SelectionPopup.propTypes = {
+	params: PropTypes.shape({
+		rect: PropTypes.object.isRequired,
+		annotation: PropTypes.object.isRequired
+	}).isRequired,
+	textSelectionAnnotationMode: PropTypes.oneOf(['highlight', 'underline']),
+	onAddAnnotation: PropTypes.func,
+	onAddToNote: PropTypes.func.isRequired,
+	onChangeTextSelectionAnnotationMode: PropTypes.func.isRequired,
+	hasSearchResults: PropTypes.bool,
+	onConvertSearchResults: PropTypes.func,
+	enableAddToNote: PropTypes.bool
+};
 
 export default SelectionPopup;

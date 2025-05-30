@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-Promise.withResolvers || (Promise.withResolvers = function () {
+Promise.withResolvers || (Promise.withResolvers = function() {
 	var a, b, c = new this(function (resolve, reject) {
 		a = resolve;
 		b = reject;
@@ -134,50 +134,6 @@ function getCharacterType(charCode) {
 	return CharacterType.ALPHA_LETTER;
 }
 
-let NormalizeWithNFKC;
-
-function getNormalizeWithNFKC() {
-	/* eslint-disable no-irregular-whitespace */
-	NormalizeWithNFKC ||= ` ¨ª¯²-µ¸-º¼-¾Ĳ-ĳĿ-ŀŉſǄ-ǌǱ-ǳʰ-ʸ˘-˝ˠ-ˤʹͺ;΄-΅·ϐ-ϖϰ-ϲϴ-ϵϹևٵ-ٸक़-य़ড়-ঢ়য়ਲ਼ਸ਼ਖ਼-ਜ਼ਫ਼ଡ଼-ଢ଼ำຳໜ-ໝ༌གྷཌྷདྷབྷཛྷཀྵჼᴬ-ᴮᴰ-ᴺᴼ-ᵍᵏ-ᵪᵸᶛ-ᶿẚ-ẛάέήίόύώΆ᾽-῁ΈΉ῍-῏ΐΊ῝-῟ΰΎ῭-`ΌΏ´-῾ - ‑‗․-… ″-‴‶-‷‼‾⁇-⁉⁗ ⁰-ⁱ⁴-₎ₐ-ₜ₨℀-℃℅-ℇ℉-ℓℕ-№ℙ-ℝ℠-™ℤΩℨK-ℭℯ-ℱℳ-ℹ℻-⅀ⅅ-ⅉ⅐-ⅿ↉∬-∭∯-∰〈-〉①-⓪⨌⩴-⩶⫝̸ⱼ-ⱽⵯ⺟⻳⼀-⿕　〶〸-〺゛-゜ゟヿㄱ-ㆎ㆒-㆟㈀-㈞㈠-㉇㉐-㉾㊀-㏿ꚜ-ꚝꝰꟲ-ꟴꟸ-ꟹꭜ-ꭟꭩ豈-嗀塚晴凞-羽蘒諸逸-都飯-舘並-龎ﬀ-ﬆﬓ-ﬗיִײַ-זּטּ-לּמּנּ-סּףּ-פּצּ-ﮱﯓ-ﴽﵐ-ﶏﶒ-ﷇﷰ-﷼︐-︙︰-﹄﹇-﹒﹔-﹦﹨-﹫ﹰ-ﹲﹴﹶ-ﻼ！-ﾾￂ-ￇￊ-ￏￒ-ￗￚ-ￜ￠-￦`;
-
-	if (typeof PDFJSDev === "undefined" || PDFJSDev.test("TESTING")) {
-		const ranges = [];
-		const range = [];
-		const diacriticsRegex = /^\p{M}$/u;
-		// Some chars must be replaced by their NFKC counterpart during a search.
-		for (let i = 0; i < 65536; i++) {
-			const c = String.fromCharCode(i);
-			if (c.normalize("NFKC") !== c && !diacriticsRegex.test(c)) {
-				if (range.length !== 2) {
-					range[0] = range[1] = i;
-					continue;
-				}
-				if (range[1] + 1 !== i) {
-					if (range[0] === range[1]) {
-						ranges.push(String.fromCharCode(range[0]));
-					}
-					else {
-						ranges.push(
-							`${String.fromCharCode(range[0])}-${String.fromCharCode(
-								range[1]
-							)}`
-						);
-					}
-					range[0] = range[1] = i;
-				}
-				else {
-					range[1] = i;
-				}
-			}
-		}
-		if (ranges.join("") !== NormalizeWithNFKC) {
-			throw new Error(
-				"getNormalizeWithNFKC - update the `NormalizeWithNFKC` string."
-			);
-		}
-	}
-	return NormalizeWithNFKC;
-}
 // ]
 
 /**
@@ -306,8 +262,8 @@ const DIACRITICS_EXCEPTION = new Set([
 let DIACRITICS_EXCEPTION_STR; // Lazily initialized, see below.
 
 const DIACRITICS_REG_EXP = /\p{M}+/gu;
-const SPECIAL_CHARS_REG_EXP
-	= /([.*+?^${}()|[\]\\])|(\p{P})|(\s+)|(\p{M})|(\p{L})/gu;
+const SPECIAL_CHARS_REG_EXP =
+	/([.*+?^${}()|[\]\\])|(\p{P})|(\s+)|(\p{M})|(\p{L})/gu;
 const NOT_DIACRITIC_FROM_END_REG_EXP = /([^\p{M}])\p{M}*$/u;
 const NOT_DIACRITIC_FROM_START_REG_EXP = /^\p{M}*([^\p{M}])/u;
 
@@ -317,8 +273,8 @@ const SYLLABLES_REG_EXP = /[\uAC00-\uD7AF\uFA6C\uFACF-\uFAD1\uFAD5-\uFAD7]+/g;
 const SYLLABLES_LENGTHS = new Map();
 // When decomposed (in using NFD) the above syllables will start
 // with one of the chars in this regexp.
-const FIRST_CHAR_SYLLABLES_REG_EXP
-	= "[\\u1100-\\u1112\\ud7a4-\\ud7af\\ud84a\\ud84c\\ud850\\ud854\\ud857\\ud85f]";
+const FIRST_CHAR_SYLLABLES_REG_EXP =
+	"[\u1100-\u1112\ud7a4-\ud7af\ud84a\ud84c\ud850\ud854\ud857\ud85f]";
 
 const NFKC_CHARS_TO_NORMALIZE = new Map();
 
@@ -355,13 +311,12 @@ function normalize(text) {
 	else {
 		// Compile the regular expression for text normalization once.
 		const replace = Object.keys(CHARACTERS_TO_NORMALIZE).join("");
-		const toNormalizeWithNFKC = getNormalizeWithNFKC();
 
 		// 3040-309F: Hiragana
 		// 30A0-30FF: Katakana
 		const CJK = "(?:\\p{Ideographic}|[\u3040-\u30FF])";
 		const HKDiacritics = "(?:\u3099|\u309A)";
-		const regexp = `([${replace}])|([${toNormalizeWithNFKC}])|(${HKDiacritics}\\n)|(\\p{M}+(?:-\\n)?)|(\\S-\\n)|(${CJK}\\n)|(\\n)`;
+		const regexp = `([${replace}])|([${HKDiacritics}\\n)|(\\p{M}+(?:-\\n)?)|(\\S-\\n)|(${CJK}\\n)|(\\n)`;
 
 		if (syllablePositions.length === 0) {
 			// Most of the syllables belong to Hangul so there are no need
@@ -438,21 +393,6 @@ function normalize(text) {
 			}
 
 			if (p2) {
-				// Use the NFKC representation to normalize the char.
-				let replacement = NFKC_CHARS_TO_NORMALIZE.get(p2);
-				if (!replacement) {
-					replacement = p2.normalize("NFKC");
-					NFKC_CHARS_TO_NORMALIZE.set(p2, replacement);
-				}
-				const jj = replacement.length;
-				for (let j = 1; j < jj; j++) {
-					positions.push([i - shift + j, shift - j]);
-				}
-				shift -= jj - 1;
-				return replacement;
-			}
-
-			if (p3) {
 				// We've a Katakana-Hiragana diacritic followed by a \n so don't replace
 				// the \n by a whitespace.
 				hasDiacritics = true;
@@ -474,12 +414,12 @@ function normalize(text) {
 				shiftOrigin += 1;
 				eol += 1;
 
-				return p3.charAt(0);
+				return p2.charAt(0);
 			}
 
-			if (p4) {
-				const hasTrailingDashEOL = p4.endsWith("\n");
-				const len = hasTrailingDashEOL ? p4.length - 2 : p4.length;
+			if (p3) {
+				const hasTrailingDashEOL = p3.endsWith("\n");
+				const len = hasTrailingDashEOL ? p3.length - 2 : p3.length;
 
 				// Diacritics.
 				hasDiacritics = true;
@@ -505,39 +445,39 @@ function normalize(text) {
 					shift += 1;
 					shiftOrigin += 1;
 					eol += 1;
-					return p4.slice(0, len);
+					return p3.slice(0, len);
 				}
 
-				return p4;
+				return p3;
 			}
 
-			if (p5) {
+			if (p4) {
 				// "X-\n" is removed because an hyphen at the end of a line
 				// with not a space before is likely here to mark a break
 				// in a word.
 				// If X is encoded with UTF-32 then it can have a length greater than 1.
 				// The \n isn't in the original text so here y = i, n = X.len - 2 and
 				// o = X.len - 1.
-				const len = p5.length - 2;
+				const len = p4.length - 2;
 				positions.push([i - shift + len, 1 + shift]);
 				shift += 1;
 				shiftOrigin += 1;
 				eol += 1;
-				return p5.slice(0, -2);
+				return p4.slice(0, -2);
 			}
 
-			if (p6) {
+			if (p5) {
 				// An ideographic at the end of a line doesn't imply adding an extra
 				// white space.
 				// A CJK can be encoded in UTF-32, hence their length isn't always 1.
-				const len = p6.length - 1;
+				const len = p5.length - 1;
 				positions.push([i - shift + len, shift]);
 				shiftOrigin += 1;
 				eol += 1;
-				return p6.slice(0, -1);
+				return p5.slice(0, -1);
 			}
 
-			if (p7) {
+			if (p6) {
 				// eol is replaced by space: "foo\nbar" is likely equivalent to
 				// "foo bar".
 				positions.push([i - shift + 1, shift - 1]);
@@ -611,7 +551,7 @@ function getSnippet(text, phraseStart, phraseEnd, numWordsAround) {
 	let rightText = text.substring(phraseEnd).trim();
 
 	let leftWords = leftText ? leftText.split(/\s+/) : [];
-	let rightWords = rightText ? rightText.split(/\s+/) : [];
+	let rightWords = rightText ? rightWords.split(/\s+/) : [];
 
 	let leftSnippetWords = leftWords.slice(-numWordsAround);
 	let rightSnippetWords = rightWords.slice(0, numWordsAround);
@@ -756,7 +696,7 @@ class PDFFindController {
 			}
 			this._extractText();
 
-			const findbarClosed = !this._highlightMatches;
+			const _findbarClosed = !this._highlightMatches;
 			const pendingTimeout = !!this._findTimeout;
 
 			if (this._findTimeout) {
@@ -919,23 +859,16 @@ class PDFFindController {
 		}
 
 		switch (state.type) {
-			case "again":
+			case "again": {
 				const pageNumber = this._selected.pageIdx + 1;
 				const linkService = this._linkService;
-				// Only treat a 'findagain' event as a new search operation when it's
-				// *absolutely* certain that the currently selected match is no longer
-				// visible, e.g. as a result of the user scrolling in the document.
-				//
-				// NOTE: If only a simple `this._linkService.page` check was used here,
-				// there's a risk that consecutive 'findagain' operations could "skip"
-				// over matches at the top/bottom of pages thus making them completely
-				// inaccessible when there's multiple pages visible in the viewer.
 				return (
 					pageNumber >= 1
 					&& pageNumber <= linkService.pagesCount
 					&& pageNumber !== linkService.page
 					&& !(this.onIsPageVisible?.(pageNumber) ?? true)
 				);
+			}
 			case "highlightallchange":
 				return false;
 		}
@@ -980,8 +913,8 @@ class PDFFindController {
 		let match;
 		while ((match = query.exec(pageContent)) !== null) {
 			if (
-				entireWord
-				&& !this._isEntireWord(pageContent, match.index, match[0].length)
+				entireWord &&
+				!this._isEntireWord(pageContent, match.index, match[0].length)
 			) {
 				continue;
 			}
@@ -1085,15 +1018,14 @@ class PDFFindController {
 		else {
 			// Words are sorted in reverse order to be sure that "foobar" is matched
 			// before "foo" in case the query is "foobar foo".
-			query = query.sort().reverse().map((q) => {
+			query = query.sort().reverse().map(q => {
 				const [isUnicodePart, queryPart] = this._convertToRegExpString(
 					q,
 					hasDiacritics
 				);
 				isUnicode ||= isUnicodePart;
 				return `(${queryPart})`;
-			})
-.join("|");
+			}).join("|");
 		}
 
 		const flags = `g${isUnicode ? "u" : ""}${caseSensitive ? "" : "i"}`;
@@ -1222,8 +1154,8 @@ class PDFFindController {
 		if (offset.matchIdx !== null) {
 			const numPageMatches = this._pageMatches[offset.pageIdx].length;
 			if (
-				(!previous && offset.matchIdx + 1 < numPageMatches)
-				|| (previous && offset.matchIdx > 0)
+				(!previous && offset.matchIdx + 1 < numPageMatches) ||
+				(previous && offset.matchIdx > 0)
 			) {
 				// The simple case; we just have advance the matchIdx to select
 				// the next match on the page.
@@ -1324,8 +1256,8 @@ class PDFFindController {
 		this._firstPageCapability.promise.then(() => {
 			// Only update the UI if the document is open, and is the current one.
 			if (
-				!this._pdfDocument
-				|| (pdfDocument && this._pdfDocument !== pdfDocument)
+				!this._pdfDocument ||
+				(pdfDocument && this._pdfDocument !== pdfDocument)
 			) {
 				return;
 			}

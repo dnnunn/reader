@@ -250,10 +250,9 @@ class EPUBView extends DOMView<EPUBViewState, EPUBViewData> {
 
 	private async _displaySections() {
 		let cssRewriter = new CSSRewriter(this._iframeDocument);
-		for (let section of this.book.spine.spineItems) {
-			// We should filter to linear sections only,
-			// but we need to be sure it won't break anything
-			await this._displaySection(section, cssRewriter);
+		for (let spineItem of this.book.spine.spineItems) {
+			// The spineItems array already contains Section objects
+			await this._displaySection(spineItem, cssRewriter);
 		}
 
 		this._iframeDocument.documentElement.style.writingMode = this.book.packaging.metadata.primary_writing_mode

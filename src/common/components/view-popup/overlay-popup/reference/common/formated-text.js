@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 export default function FormattedText({ chars, onOpenLink }) {
 	// Helper function to create JSX from text and its properties
@@ -22,6 +23,13 @@ export default function FormattedText({ chars, onOpenLink }) {
 
 		return jsx;
 	}
+
+	CreateJSX.propTypes = {
+		text: PropTypes.string.isRequired,
+		bold: PropTypes.bool,
+		italic: PropTypes.bool,
+		url: PropTypes.string
+	};
 
 	// Convert the chars array to JSX by grouping and formatting
 	const formattedText = React.useMemo(() => {
@@ -50,3 +58,16 @@ export default function FormattedText({ chars, onOpenLink }) {
 		</div>
 	);
 }
+
+FormattedText.propTypes = {
+	chars: PropTypes.arrayOf(PropTypes.shape({
+		c: PropTypes.string.isRequired,
+		bold: PropTypes.bool,
+		italic: PropTypes.bool,
+		url: PropTypes.string,
+		spaceAfter: PropTypes.bool,
+		lineBreakAfter: PropTypes.bool,
+		ignorable: PropTypes.bool
+	})).isRequired,
+	onOpenLink: PropTypes.func.isRequired
+};
