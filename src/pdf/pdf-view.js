@@ -1698,8 +1698,8 @@ class PDFView {
 			}
 			else {
 				action = (mouse || event.pointerType === 'pen' || ['highlight', 'underline'].includes(this._tool.type))
-					? { type: 'selectText' }  // Enable text selection if using mouse/pen or highlight/underline tool
-					: { type: 'none' };       // Otherwise don't trigger action for touch/pen (scrolling)
+					? { type: 'selectText' } // Enable text selection if using mouse/pen or highlight/underline tool
+					: { type: 'none' }; // Otherwise don't trigger action for touch/pen (scrolling)
 			}
 		}
 
@@ -3313,7 +3313,6 @@ class PDFView {
 		let annotation = this.action.annotation;
 		let canvas = this._dragCanvas;
 		if (annotation.type === 'text') {
-			let ctx = canvas.getContext('2d');
 			let pixelRatio = window.devicePixelRatio;
 			canvas.width = 12 * pixelRatio;
 			canvas.height = 12 * pixelRatio;
@@ -3325,13 +3324,14 @@ class PDFView {
 			// let p = new Path2D('M1.4375 0.4375C1.15866 0.4375 0.9375 0.658658 0.9375 0.9375L0.9375 2.46875C0.9375 2.74759 1.15866 2.96875 1.4375 2.96875L1.9375 2.96875C2.21634 2.96875 2.4375 2.74759 2.4375 2.46875L2.4375 1.9375L4.96875 1.9375L4.96875 10.0312L4.46875 10.0312C4.18991 10.0313 3.9375 10.2524 3.9375 10.5312L3.9375 11.0312C3.9375 11.3101 4.18991 11.5625 4.46875 11.5625L5.96875 11.5625L7.5 11.5625C7.77884 11.5625 8 11.3101 8 11.0312L8 10.5312C8 10.2524 7.77884 10.0312 7.5 10.0312L7 10.0312L7 1.9375L9.5 1.9375L9.5 2.46875C9.5 2.74759 9.72116 2.96875 10 2.96875L10.5312 2.96875C10.8101 2.96875 11.0312 2.74759 11.0312 2.46875L11.0312 0.9375C11.0312 0.658658 10.8101 0.4375 10.5312 0.4375L10.0312 0.4375L5.96875 0.4375L1.9375 0.4375L1.4375 0.4375Z');
 			// ctx.fill(p);
 			event.dataTransfer.setDragImage(canvas, 12, 6);
-		} else {
+		}
+		else {
 			let page = this.getPageByIndex(annotation.position.pageIndex);
 			if (page && typeof page.renderAnnotationOnCanvas === 'function') {
 				page.renderAnnotationOnCanvas(annotation, canvas);
 				// When window.devicePixelRatio > 1, Chrome uses CSS pixels when positioning
 				// image with setDragImage, while Safari/Firefox uses physical pixels. Weird.
-				let pixelRatio = (isSafari || isFirefox || 1) ? window.devicePixelRatio : 1;
+				let pixelRatio = isSafari || isFirefox ? window.devicePixelRatio : 1;
 				let rect = getPositionBoundingRect(annotation.position);
 				let width = rect[2] - rect[0];
 				let scale = (canvas.width / pixelRatio) / width;
@@ -3341,7 +3341,8 @@ class PDFView {
 
 		if (this._selectionRanges.length <= 2) {
 			this._onSetDataTransferAnnotations(event.dataTransfer, this.action.annotation);
-		} else {
+		}
+		else {
 			// Only drag text when selection spans over more than 2 pages
 			let fullText = getTextFromSelectionRanges(this._selectionRanges);
 			event.dataTransfer.clearData();
@@ -3364,7 +3365,7 @@ class PDFView {
 		this._handlePointerUp(event);
 	}
 
-	_handleDrop(event) {
+	_handleDrop(_event) {
 
 	}
 
@@ -3459,7 +3460,6 @@ class PDFView {
 		let rect = page.div.getBoundingClientRect();
 		let x = event.clientX + page.div.scrollLeft - rect.left;
 		let y = event.clientY + page.div.scrollTop - rect.top;
-		let pageRect = page.pdfPage.view;
 
 		if (action) {
 			let tm = getRotationTransform(action.annotation.position.rects[0], action.annotation.position.rotation);
@@ -3565,12 +3565,14 @@ class PDFView {
 				console.error(`"${destArray[1].name}" is not a valid destination type.`);
 				return;
 		}
-
-		return {
+		// Since this is an async method, we should not return a value directly
+		const position = {
 			pageIndex: pageNumber - 1,
 			x,
 			y,
 		};
+		// eslint-disable-next-line consistent-return
+		return position;
 	}
 
 	/**
